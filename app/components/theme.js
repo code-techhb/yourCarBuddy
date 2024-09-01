@@ -1,3 +1,4 @@
+
 import { createTheme } from "@mui/material";
 
 const theme = createTheme({
@@ -9,6 +10,13 @@ const theme = createTheme({
       white: "#FFFFFF",
       black: "#000000",
       chatbox: "#F5F1EF",
+    },
+    text: {
+      dark: "#4056A1",
+      white: "#FFFFFF",
+      light: "#F1F0EB",
+      black: "#000000",
+      green: "#00D779",
     },
   },
 
