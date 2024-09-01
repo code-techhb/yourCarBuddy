@@ -1,61 +1,98 @@
-'use client'
-import { AppBar, Toolbar, Button, Box, 
-    ThemeProvider,InputAdornment
-  ,DialogTitle, Dialog, DialogActions, DialogContent, DialogContentText, TextField } from "@mui/material";
-  import Theme from "./theme";
-  import { useRouter } from "next/navigation";
-  import React, { useEffect } from "react";
-  
-  const Navbar = () => {
-    const router = useRouter();
-    const [open, setOpen] = React.useState(false);
-    const handleRedirectContactUs = () => {
-      router.push("/contact-us");
-    };
-    const handleRedirectFaq = () => {
-      router.push("/faq");
-    };
-  
-    
-  
-    const handleClickOpen = () => {
-      setOpen(true);
-    };
-  
-    const handleClose = () => {
-      setOpen(false);
-    };
-  
-    // _____________________________ Nav Bar UI _____________________________
-  
-    return (
-      <ThemeProvider theme={Theme}>
-        <AppBar
-          position="static"
-          //sx={{ backgroundColor: 'black' }}
-          elevation={0}
-        >
-          <Toolbar>
-            <Box
-              display="flex"
-              justifyContent="space-between"
-              alignItems="center"
-              width="100%"
-            >
-              <Box>
-                <a href="/" >
-                  <img
-                    src="/logo.png"
-                    href="/"
-                    width={70}
-                    height={31}
-                    alt="logo car buddy"
-                    
-                  />
-                </a>
-              </Box>
-              <Box >
-                {/* <Button
+"use client";
+import {
+  AppBar,
+  Toolbar,
+  Button,
+  Box,
+  ThemeProvider,
+  InputAdornment,
+  DialogTitle,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogContentText,
+  TextField,
+} from "@mui/material";
+import Theme from "./theme";
+import { useRouter } from "next/navigation";
+import React, { useEffect } from "react";
+import {
+  ClerkProvider,
+  SignInButton,
+  SignOutButton,
+  SignedIn,
+  SignedOut,
+  SignUpButton,
+  UserButton,
+  useAuth,
+} from "@clerk/nextjs";
+
+const Navbar = () => {
+  // --------------------- event handler function ------------------
+  const router = useRouter();
+  const { isSignedIn } = useAuth();
+
+  // Effect to redirect after sign-in
+  useEffect(() => {
+    if (isSignedIn) {
+      router.push("/newHomepage"); // Redirect to the homepage after signing in
+    }
+  }, [isSignedIn, router]);
+
+  const handleRedirectLoginPage = () => {
+    router.push("/sign-in");
+  };
+
+  const [open, setOpen] = React.useState(false);
+
+  const handleRedirectContactUs = () => {
+    router.push("/contact-us");
+  };
+  const handleRedirectFaq = () => {
+    router.push("/faq");
+  };
+
+  const handleClickOpen = () => {
+    setOpen(true);
+  };
+
+  const handleClose = () => {
+    setOpen(false);
+  };
+
+  const handleRedirectSUpport = () => {
+    router.push("/support");
+  };
+
+  // _____________________________ Nav Bar UI _____________________________
+
+  return (
+    <ThemeProvider theme={Theme}>
+      <AppBar
+        position="static"
+        //sx={{ backgroundColor: 'black' }}
+        elevation={0}
+      >
+        <Toolbar>
+          <Box
+            display="flex"
+            justifyContent="space-between"
+            alignItems="center"
+            width="100%"
+          >
+            <Box>
+              <a href="/">
+                <img
+                  src="/logo.png"
+                  href="/"
+                  width={70}
+                  height={31}
+                  alt="logo car buddy"
+                />
+              </a>
+            </Box>
+            <Box>
+              {/* <Button
                   variant="outlined"
                   sx={{
                     borderRadius: "16px",
@@ -69,7 +106,10 @@ import { AppBar, Toolbar, Button, Box,
                   onClick={handleRedirectChatbot}
                 >
                   Chat with AI
+
+                  
                 </Button> */}
+              <SignedOut>
                 <Button
                   variant="text"
                   sx={{
@@ -77,20 +117,20 @@ import { AppBar, Toolbar, Button, Box,
                     fontFamily: "Montserrat",
                     color: Theme.palette.text.green,
                     fontSize: {
-                      xs: "10px", 
-                      sm: "12px", 
-                      md: "12px", 
-                      lg: "18px", 
+                      xs: "10px",
+                      sm: "12px",
+                      md: "12px",
+                      lg: "18px",
                     },
                     padding: {
-                      xs: '4px 5px 4px 20px', 
-                      sm: '4px 5px 4px 20px', 
-                      md: '4px 30px 4px 30px', 
-                      lg: '4px 30px 4px 30px', 
+                      xs: "4px 5px 4px 20px",
+                      sm: "4px 5px 4px 20px",
+                      md: "4px 30px 4px 30px",
+                      lg: "4px 30px 4px 30px",
                     },
-                    textDecoration: "none", 
+                    textDecoration: "none",
                     "&:hover": {
-                      textDecoration: "underline", 
+                      textDecoration: "underline",
                     },
                   }}
                   onClick={handleRedirectFaq}
@@ -103,116 +143,125 @@ import { AppBar, Toolbar, Button, Box,
                     boxShadow: "none",
                     fontFamily: "Montserrat",
                     fontSize: {
-                      xs: "10px", 
-                      sm: "12px", 
-                      md: "12px", 
-                      lg: "18px", 
+                      xs: "10px",
+                      sm: "12px",
+                      md: "12px",
+                      lg: "18px",
                     },
                     padding: {
-                      xs: '4px 20px 4px 0px', 
-                      sm: '4px 20px, 4px 0px', 
-                      md: '8px 30px 4px 0px', 
-                      lg: '8px 30px 4px 0px', 
+                      xs: "4px 20px 4px 0px",
+                      sm: "4px 20px, 4px 0px",
+                      md: "8px 30px 4px 0px",
+                      lg: "8px 30px 4px 0px",
                     },
                     color: Theme.palette.text.green,
                     textDecoration: "none",
                     "&:hover": {
-                      textDecoration: "underline", 
+                      textDecoration: "underline",
                     },
                   }}
                   onClick={handleRedirectContactUs}
                 >
                   Contact US
                 </Button>
-  
-  
-                <React.Fragment>
+
+                <SignInButton>
                   <Button
-                    type="submit"
-                    variant="contained"
-                    color="primary"
+                    variant="text"
                     sx={{
-                      background: Theme.palette.primary.secondary,
-                      borderRadius: 6,
-                      padding: {
-                        xs: '4px 20px', 
-                        sm: '4px 20px', 
-                        md: '8px 40px', 
-                        lg: '8px 40px', 
+                      boxShadow: "none",
+                      fontFamily: "Montserrat",
+                      fontSize: {
+                        xs: "10px",
+                        sm: "12px",
+                        md: "12px",
+                        lg: "18px",
                       },
-                      color: 'black',
-                      textTransform: 'none',
+                      borderRadius: "16px",
+                      padding: {
+                        xs: "4px 20px 4px 0px",
+                        sm: "4px 20px, 4px 0px",
+                        md: "8px 30px 4px 0px",
+                        lg: "8px 30px 4px 0px",
+                      },
+                      color: Theme.palette.text.green,
+                      textDecoration: "none",
+                      "&:hover": {
+                        textDecoration: "underline",
+                      },
                     }}
-                    onClick={handleClickOpen}
                   >
                     LOG IN
                   </Button>
-                  <Dialog
-                    open={open}
-                    onClose={handleClose}
-                    PaperProps={{
-                      sx: {
-                        background: `linear-gradient(to bottom, black, #005852)`, 
-                        borderRadius: 6, // Add borderRadius
+                </SignInButton>
+
+                <SignUpButton>
+                  <Button
+                    variant="text"
+                    sx={{
+                      boxShadow: "none",
+                      fontFamily: "Montserrat",
+                      fontSize: {
+                        xs: "10px",
+                        sm: "12px",
+                        md: "12px",
+                        lg: "18px",
                       },
-                      component: 'form',
-                      onSubmit: (event) => {
-                        event.preventDefault();
-                        const formData = new FormData(event.currentTarget);
-                        const formJson = Object.fromEntries(formData.entries());
-                        const email = formJson.email;
-                        console.log(email);
-                        handleClose();
+                      borderRadius: "16px",
+                      padding: {
+                        xs: "4px 20px 4px 0px",
+                        sm: "4px 20px, 4px 0px",
+                        md: "8px 30px 4px 0px",
+                        lg: "8px 30px 4px 0px",
+                      },
+                      color: Theme.palette.text.green,
+                      textDecoration: "none",
+                      "&:hover": {
+                        textDecoration: "underline",
                       },
                     }}
                   >
-                    <DialogTitle sx={{
-              color: Theme.palette.primary.green, // Change title color to green
-            }}
-                  ></DialogTitle>
-                    <DialogContent sx={{
-                          color: 'white', // Change title color to green
-                        }}>
-                      <DialogContentText sx={{
-              color: Theme.palette.primary.green, // Change title color to green
-            }} >
-                        Get in!
-                      </DialogContentText >
-                      <TextField
-                        autoFocus
-                        required
-                        margin="dense"
-                        id="name"
-                        name="email"
-                        label="Email Address"
-                        type="email"
-                        fullWidth
-                        variant="standard"
-                        InputLabelProps={{
-                          sx: { color: 'white' }, // Change label color to white
-                        }}
-                        InputProps={{
-                          sx: { color: 'white' }, // Change input text color to white
-                        }}
-                        
-                        
-                      />
-                    </DialogContent>
-                    <DialogActions>
-                      <Button variant="text" onClick={handleClose} sx={{
-                      color: Theme.palette.text.green}}>Cancel</Button>
-                      <Button variant="text" type="submit" sx={{
-                      color: Theme.palette.text.green,}}>Subscribe</Button>
-                    </DialogActions>
-                  </Dialog>
-                </React.Fragment>
-              </Box>
+                    SIGN UP
+                  </Button>
+                </SignUpButton>
+              </SignedOut>
+              <SignedIn>
+                <Button
+                  variant="text"
+                  sx={{
+                    boxShadow: "none",
+                    fontFamily: "Montserrat",
+                    fontSize: {
+                      xs: "10px",
+                      sm: "12px",
+                      md: "12px",
+                      lg: "18px",
+                    },
+                    padding: {
+                      xs: "4px 20px 4px 0px",
+                      sm: "4px 20px, 4px 0px",
+                      md: "8px 30px 4px 0px",
+                      lg: "8px 30px 4px 0px",
+                    },
+                    color: Theme.palette.text.green,
+                    textDecoration: "none",
+                    "&:hover": {
+                      textDecoration: "underline",
+                    },
+                  }}
+                  onClick={handleRedirectSUpport}
+                >
+                  Support
+                </Button>
+
+                <UserButton />
+              </SignedIn>
             </Box>
-          </Toolbar>
-        </AppBar>
-      </ThemeProvider>
-    );
-  };
-  
-  export default Navbar;
-  
+          </Box>
+        </Toolbar>
+      </AppBar>
+    </ThemeProvider>
+  );
+};
+
+export default Navbar;
