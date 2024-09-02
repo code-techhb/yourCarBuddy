@@ -15,7 +15,7 @@ import {
 } from "@mui/material";
 import BuildIcon from "@mui/icons-material/Build";
 import Checkbox from "@mui/material/Checkbox";
-import BottomNav from "../components/botton_nav";
+import BottomNav from "../components/bottom_nav";
 import Navbar from "../components/navbar";
 
 export default function Dashboard() {
