@@ -32,7 +32,6 @@ const FeaturesAI = () => {
             component="h2"
             sx={{
               textAlign: 'center',
-              fontFamily: 'Paytone One',
               fontSize: '40px',
               fontStyle: Theme.typography.h2,
               fontWeight: 700,
@@ -87,14 +86,14 @@ const FeaturesAI = () => {
               <Typography
                 variant="h5"
                 color="primary.light_purple"
-                sx={{ fontWeight: 600, mb: 2, fontFamily: 'Poppins' }}
+                sx={{ fontWeight: 600, mb: 2}}
               >
                 Smart Maintenance Reminders
               </Typography>
 
               <Typography
                 sx={{
-                  fontFamily: 'Poppins',
+                  
                   color: 'primary.light_purple',
                   fontSize: '16px',
                 }}
@@ -135,14 +134,13 @@ const FeaturesAI = () => {
               <Typography
                 variant="h5"
                 color="primary.light_purple"
-                sx={{ fontWeight: 600, mb: 2, fontFamily: 'Poppins' }}
+                sx={{ fontWeight: 600, mb: 2 }}
               >
                 AI Assistant
               </Typography>
 
               <Typography
                 sx={{
-                  fontFamily: 'Poppins',
                   color: 'primary.light_purple',
                   fontSize: '16px',
                 }}
@@ -183,14 +181,13 @@ const FeaturesAI = () => {
               <Typography
                 variant="h5"
                 color="primary.light_purple"
-                sx={{ fontWeight: 600, mb: 2, fontFamily: 'Poppins' }}
+                sx={{ fontWeight: 600, mb: 2}}
               >
                 Maintenance Log
               </Typography>
 
               <Typography
                 sx={{
-                  fontFamily: 'Poppins',
                   color: 'primary.light_purple',
                   fontSize: '16px',
                 }}

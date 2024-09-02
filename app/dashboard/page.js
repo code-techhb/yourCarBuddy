@@ -25,7 +25,7 @@ export default function Dashboard() {
       <Navbar />
       {/* outer box  */}
       <Box
-        width="100vw"
+        
         height="100vh"
         sx={{
           background: theme.custom.background,
@@ -33,6 +33,8 @@ export default function Dashboard() {
           justifyContent: "center",
           alignItems: "center",
           flexDirection: "column",
+          width:"100vw",
+          maxWidth:'100%'
         }}
       >
         {/* Upcoming maintenance box */}

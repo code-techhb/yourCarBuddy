@@ -8,6 +8,7 @@ import Theme from "./components/theme";
 import MiddleHero from "./components/hero2";
 import FeaturesAI from "./components/features";
 import Footer from "./components/footer";
+import Profile from "./profile/page";
 
 export default function Home() {
   return (
@@ -80,6 +81,7 @@ export default function Home() {
       </Box>
 
       <Footer></Footer>
+
     </ThemeProvider>
   );
 }

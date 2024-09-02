@@ -7,6 +7,8 @@ import { FormControl, CssBaseline, Box, Label, ThemeProvider, Typography, Button
 import Theme from "../components/theme"
 import Grid from '@mui/material/Grid2';
 import DeleteIcon from '@mui/icons-material/Delete';
+import Navbar from '../components/navbar';
+import Footer from '../components/footer';
 
 
 function createData(VIN, make, model, year, mileage) {
@@ -25,21 +27,22 @@ const Profile = () => {
   return (
     <ThemeProvider theme={Theme}>
     <CssBaseline />
+<Navbar />
       <Box
         sx={{
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
-          marginTop: 15,
-          marginLeft: 5,
-          marginRight: 5,
-          marginRight: 5,
-          marginBottom: 15,
-          minWidth: '100vw',
+          minWidth: '100%',
           flexDirection: 'column',
-          width: '100%'
+          width: '10vw',
+          height: "100vh",
+          background: "#D1DFBA",
+          backgroundSize: "cover",
+          backgroundPosition: "center",
         }}
       >
+        
         <Box
           sx={{
             width: '100%', 
@@ -91,7 +94,7 @@ const Profile = () => {
       <Table sx={{ minWidth: 650 }} aria-label="simple table">
         <TableHead>
           <TableRow>
-            <TableCell align="right" sx={{fontWeight: 'bold', fontSize: 22}} >Make</TableCell>
+            <TableCell align="right" sx={{fontWeight: 'bold', fontSize: 22}} >Brand</TableCell>
             <TableCell align="right" sx={{fontWeight: 'bold', fontSize: 22}}>Vin#</TableCell>
             <TableCell align="right" sx={{fontWeight: 'bold', fontSize: 22}}>Make</TableCell>
             <TableCell align="right" sx={{fontWeight: 'bold', fontSize: 22}}>Model</TableCell>
@@ -150,6 +153,7 @@ const Profile = () => {
                   </Button>
         </Box>
     </Box>
+    <Footer></Footer>
     </ThemeProvider>
   );
 }
