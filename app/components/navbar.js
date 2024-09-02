@@ -35,7 +35,7 @@ const Navbar = () => {
   // Effect to redirect after sign-in
   useEffect(() => {
     if (isSignedIn) {
-      router.push("/newHomepage"); // Redirect to the homepage after signing in
+      router.push("/register"); // Redirect to the homepage after signing in
     }
   }, [isSignedIn, router]);
 
@@ -78,7 +78,7 @@ const Navbar = () => {
             display="flex"
             justifyContent="space-between"
             alignItems="center"
-            sx={{width:"100vw"}}
+            sx={{ width: "100vw" }}
           >
             <Box>
               <a href="/">
