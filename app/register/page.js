@@ -8,13 +8,21 @@ import {
   Typography,
   Modal,
   TextField,
+  Stack
 } from "@mui/material";
 import { styled } from "@mui/material/styles";
+import { useUser } from "@clerk/nextjs"; // Import useUser
+import { addUserCar } from "../utils/page";
+import { useRouter } from "next/navigation";
 
+import Navbar from "../components/navbar";
 // ---------------- component -----------------
 export default function RegisterForm() {
   // ---------------- state management vars -----------------
   const [open, setOpen] = useState(false);
+  const { user } = useUser(); 
+  const userId = user?.id; 
+  const router = useRouter();
 
   // Custom styled TextField
   const WhiteTextField = styled(TextField)({
@@ -45,10 +53,41 @@ export default function RegisterForm() {
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
   // ----------------------UI-----------------------------
+
+  // -----------------On submit -----------------
+  const handleSubmit = async (event) => {
+    event.preventDefault();
+    const formData = new FormData(event.currentTarget);
+
+    const carData = {
+      VIN: formData.get('VIN'),
+      brand: formData.get('brand'),
+      model: formData.get('model'),
+      year: formData.get('year'),
+      mileage: formData.get('mileage'),
+  };
+
+  console.log('Data to be passed to Firebase:', carData);
+
+    if (userId) {
+        console.log('User ID is:', userId);
+        console.log('Calling addUserCar...');
+        await addUserCar(carData, userId); // This is where addUserCar is called
+        console.log('addUserCar has been called');
+        handleClose()
+        router.push("/profile");
+      
+    } else {
+      console.error("User not authenticated");
+    }
+    
+  };
+
+
   return (
     <ThemeProvider theme={theme}>
       {/* Navbar go here */}
-
+      <Navbar></Navbar>
       {/* Outer box */}
       <Box
         width="100vw"
@@ -72,6 +111,7 @@ export default function RegisterForm() {
         </Button>
         {/* modal */}
         <Modal open={open} onClose={handleClose}>
+         
           <Box
             sx={{
               background: theme.custom.thin_background,
@@ -86,6 +126,7 @@ export default function RegisterForm() {
               flexDirection: "column",
               gap: 3,
               transform: "translate(-50%, -50%)",
+
             }}
           >
             <Typography
@@ -100,9 +141,13 @@ export default function RegisterForm() {
             >
               Please enter your car information
             </Typography>
+            
+            <form onSubmit={handleSubmit}>
+            <Stack spacing={6}>
             <WhiteTextField
               variant="standard"
-              placeholder="Car Brand"
+              placeholder="VIN"
+              name = 'VIN'
               sx={{
                 textAlign: "center",
                 fontSize: "40px",
@@ -111,44 +156,28 @@ export default function RegisterForm() {
                 color: "primary.white",
               }}
             />
-            <WhiteTextField variant="standard" placeholder="Car Model" />
+            <WhiteTextField variant="standard" placeholder="Car Brand" name = 'brand'/>
             <WhiteTextField
               variant="standard"
-              type="number"
-              placeholder="Year"
+              //type="number"
+              placeholder="Model"
+              name = 'model'
             />
             <WhiteTextField
               variant="standard"
               type="number"
               placeholder="Millage"
+              name = 'mileage'
             />
             <WhiteTextField
               variant="standard"
-              placeholder="What do you want to track?(oil, tires change, etc)"
-            />
-
-            {/* need to fix this placeholder issue */}
-            <Typography variant="body1" color="primary.white">
-              When was the last time you change it?
-            </Typography>
-            <WhiteTextField
-              variant="standard"
-              type="date"
-              // label="When was the last time you change it?"
-              fullWidth
-            />
-            {/* next */}
-            <Typography variant="body1" color="primary.white">
-              When is your car due for the next inspection?
-            </Typography>
-            <WhiteTextField
-              variant="standard"
-              type="date"
-              placeholder="When is your car due for the next inspection?"
+              placeholder="Year"
+              name = 'year'
             />
 
             <Button
               variant="standard"
+              type="submit"
               sx={{
                 borderRadius: "20px",
                 alignSelf: "center",
@@ -160,7 +189,11 @@ export default function RegisterForm() {
             >
               Submit
             </Button>
+            </Stack>
+            </form> 
+            
           </Box>
+          
         </Modal>
       </Box>
     </ThemeProvider>
