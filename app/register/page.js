@@ -58,30 +58,69 @@ export default function RegisterForm() {
   const handleSubmit = async (event) => {
     event.preventDefault();
     const formData = new FormData(event.currentTarget);
-
-    const carData = {
-      VIN: formData.get('VIN'),
-      brand: formData.get('brand'),
-      model: formData.get('model'),
-      year: formData.get('year'),
-      mileage: formData.get('mileage'),
-  };
-
-  console.log('Data to be passed to Firebase:', carData);
-
-    if (userId) {
+  
+    const vin = formData.get('VIN');
+  
+    let make = '';
+    let model = '';
+    let modelYear = '';
+    let brand = '';
+  
+    // Fetch vehicle data
+    try {
+      const response = await fetch(`https://vpic.nhtsa.dot.gov/api/vehicles/DecodeVin/${vin}?format=json`);
+      const data = await response.json();
+      const results = data.Results;
+  
+      // Extract relevant vehicle details from the response
+      results.forEach(item => {
+        if (item.Variable === 'Make') {
+          make = item.Value;
+        }
+        if (item.Variable === 'Model') {
+          model = item.Value;
+        }
+        if (item.Variable === 'Model Year') {
+          modelYear = item.Value;
+        }
+        if (item.Variable === 'Manufacturer Name') {
+          brand = item.Value;
+        }
+      });
+  
+      // Output the vehicle details
+      console.log(`Brand: ${brand}`);
+      console.log(`Make: ${make}`);
+      console.log(`Model: ${model}`);
+      console.log(`Model Year: ${modelYear}`);
+  
+      // Data to be sent to Firebase
+      const carData = {
+        VIN: formData.get('VIN'),
+        brand: brand,
+        model: model,
+        year: modelYear,
+        mileage: formData.get('mileage'),
+      };
+  
+      console.log('Data to be passed to Firebase:', carData);
+  
+      if (userId) {
         console.log('User ID is:', userId);
         console.log('Calling addUserCar...');
-        await addUserCar(carData, userId); // This is where addUserCar is called
+        await addUserCar(carData, userId);
         console.log('addUserCar has been called');
-        handleClose()
+        handleClose();
         router.push("/profile");
-      
-    } else {
-      console.error("User not authenticated");
+      } else {
+        console.error("User not authenticated");
+      }
+  
+    } catch (error) {
+      console.error('Error fetching vehicle data:', error);
     }
-    
   };
+  
 
 
   return (
@@ -156,24 +195,13 @@ export default function RegisterForm() {
                 color: "primary.white",
               }}
             />
-            <WhiteTextField variant="standard" placeholder="Car Brand" name = 'brand'/>
-            <WhiteTextField
-              variant="standard"
-              //type="number"
-              placeholder="Model"
-              name = 'model'
-            />
             <WhiteTextField
               variant="standard"
               type="number"
               placeholder="Millage"
               name = 'mileage'
             />
-            <WhiteTextField
-              variant="standard"
-              placeholder="Year"
-              name = 'year'
-            />
+
 
             <Button
               variant="standard"

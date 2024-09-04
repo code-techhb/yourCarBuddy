@@ -1,5 +1,6 @@
 'use client'
 import * as React from 'react';
+import { useState, useEffect } from 'react';
 import { styled } from '@mui/material/styles';
 import { FormControl, CssBaseline, Box, Label, ThemeProvider, Typography, Button, 
     TableContainer, Table, TableRow, TableHead, TableCell, TableBody, Paper
@@ -9,21 +10,59 @@ import Grid from '@mui/material/Grid2';
 import DeleteIcon from '@mui/icons-material/Delete';
 import Navbar from '../components/navbar';
 import Footer from '../components/footer';
-
-
-function createData(VIN, make, model, year, mileage) {
-    return { VIN, make, model, year, mileage };
-  }
-  
-  const rows = [
-    createData('12343534345', 'TOYOTA', 'COROLA', 2022, 1234),
-    createData('223DF353434', 'NISSAN', 'CENTRA', 2009, 12434),
-    createData('F3534MN3N32', 'TOYOTA', 'PRIUS', 2015, 12323),
-    createData('3423N4KJN42', 'MAZDA', 'MAZDA3', 2024, 8463),
-    createData('K2N34KJ3N2K', 'FORD', 'FOCUS', 2003, 189224),
-  ];
+import { useRouter } from 'next/navigation';
+import { getFirestore, collection, getDocs, doc, deleteDoc, query, where } from 'firebase/firestore';
+import {db} from '@/firebase'
+import { useUser } from '@clerk/nextjs';
 
 const Profile = () => {
+  const [rows, setRows] = useState([]);
+  const router = useRouter();
+  const { user } = useUser(); 
+
+  // Fetch data from Firebase
+  useEffect(() => {
+    const fetchCars = async () => {
+      const db = getFirestore();
+      const carsCollection = collection(db, 'users'); 
+      const carSnapshot = await getDocs(carsCollection);
+      const carList = carSnapshot.docs.map(doc => doc.data());
+      
+      setRows(carList);
+    };
+
+    fetchCars();
+  }, []);
+
+  // Handle Delete Function
+  const handleDelete = async (VIN) => {
+    try {
+      const db = getFirestore(); // Initialize Firestore
+      const carsCollection = collection(db, 'users'); // Reference to the 'users' collection
+  
+      // Query to find the document with the matching VIN
+      const q = query(carsCollection, where("VIN", "==", VIN));
+      const querySnapshot = await getDocs(q);
+  
+      if (!querySnapshot.empty) {
+        // Assuming VIN is unique, there should be exactly one document
+        const docId = querySnapshot.docs[0].id; // Get the document ID
+        const carDocRef = doc(db, 'users', docId); // Create a reference to the document
+        await deleteDoc(carDocRef); // Delete the document from Firestore
+        setRows((prevRows) => prevRows.filter((row) => row.VIN !== VIN)); // Update the UI to remove the deleted car
+      } else {
+        console.error("No car found with the provided VIN.");
+      }
+    } catch (error) {
+      console.error("Error deleting car: ", error);
+    }
+  };
+
+  
+  const handleAddVehicleClick = () => {
+    router.push('/register'); // Route to /register on click
+  };
+
   return (
     <ThemeProvider theme={Theme}>
     <CssBaseline />
@@ -61,9 +100,10 @@ const Profile = () => {
                 borderRadius={5}
                 >
                     <Typography
-                    marginLeft={2}>Hello Carbuddy</Typography> 
+                    marginLeft={2}>Welcome to Carbuddy {user?.fullName}</Typography> 
                     <Typography
-                    marginLeft={2}>Email</Typography> 
+                    marginLeft={2}>email: {user?.emailAddress}
+                    </Typography>
             </Box>
         
     </Box>
@@ -103,9 +143,9 @@ const Profile = () => {
           </TableRow>
         </TableHead>
         <TableBody>
-          {rows.map((row) => (
+        {rows.map((row, index) => (
             <TableRow
-              key={row.VIN}
+              key={index}
               sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
             >
               <TableCell component="th" scope="row">
@@ -118,7 +158,7 @@ const Profile = () => {
               <TableCell align="right">
                         <DeleteIcon 
                           sx={{ cursor: 'pointer', color: 'GREY' }} 
-                          onClick={() => console.log('Delete', row.VIN)} 
+                          onClick={() => handleDelete(row.VIN)} 
                         />
                       </TableCell> 
             </TableRow>
@@ -148,6 +188,7 @@ const Profile = () => {
                       color: 'black',
                       textTransform: 'none',
                     }}
+                    onClick={handleAddVehicleClick}
                   >
                     ADD A NEW VEHICLE
                   </Button>
