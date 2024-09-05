@@ -4,15 +4,18 @@ import { yellow } from '@mui/material/colors'
 import { collection, doc, addDoc, query, where, getDocs  } from 'firebase/firestore'
 
 
-
 const addUserCar = async (carData, userId) => {
+    // eslint-disable-next-line react-hooks/rules-of-hooks
+
     console.log('accessing the data????');  // Check if the function is entered
+    const currentUserId = userId
     try {
         
         console.log('Starting Firebase function');
-        const collectionRef = collection(db, 'users');
+       // const collectionRef = collection(db, 'users');
+        const carsCollectionRef = collection(db, "users", currentUserId, "cars");
 
-        const q = query(collectionRef, where("VIN", "==", carData.VIN), where("user", "==", doc(db, 'users', userId)));
+        const q = query(carsCollectionRef, where("VIN", "==", carData.VIN), where("user", "==", doc(db, 'users', userId)));
         const querySnapshot = await getDocs(q);
 
         if (!querySnapshot.empty) {
@@ -23,7 +26,7 @@ const addUserCar = async (carData, userId) => {
 
         console.log('Preparing to add document:', carData);
         
-        const docRef = await addDoc(collectionRef, {
+        const docRef = await addDoc(carsCollectionRef, {
             ...carData,
             user: userRef,
         });

@@ -13,32 +13,42 @@ import Footer from '../components/footer';
 import { useRouter } from 'next/navigation';
 import { getFirestore, collection, getDocs, doc, deleteDoc, query, where } from 'firebase/firestore';
 import {db} from '@/firebase'
-import { useUser } from '@clerk/nextjs';
+import { useUser } from "@clerk/nextjs"; 
 
 const Profile = () => {
   const [rows, setRows] = useState([]);
   const router = useRouter();
   const { user } = useUser(); 
+  const userId = user?.id; 
 
   // Fetch data from Firebase
   useEffect(() => {
+
+  
+      console.log("there is not user id")
+      
+      console.log(userId)
+
     const fetchCars = async () => {
+      
       const db = getFirestore();
-      const carsCollection = collection(db, 'users'); 
-      const carSnapshot = await getDocs(carsCollection);
-      const carList = carSnapshot.docs.map(doc => doc.data());
+
+      //const carsCollection = collection(db, 'users', userId, "cars"); 
+      console.log(carsCollection)
+      //const carSnapshot = await getDocs(carsCollection);
+      //const carList = carSnapshot.docs.map(doc => doc.data());
       
       setRows(carList);
     };
-
+  
     fetchCars();
   }, []);
 
   // Handle Delete Function
   const handleDelete = async (VIN) => {
     try {
-      const db = getFirestore(); // Initialize Firestore
-      const carsCollection = collection(db, 'users'); // Reference to the 'users' collection
+      const db = getFirestore();
+      const carsCollection = collection(db, 'users', user.id, "cars"); // Reference to the 'users' collection
   
       // Query to find the document with the matching VIN
       const q = query(carsCollection, where("VIN", "==", VIN));
