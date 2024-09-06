@@ -34,8 +34,11 @@ const Navbar = () => {
 
   // Effect to redirect after sign-in
   useEffect(() => {
-    if (isSignedIn) {
-      router.push("/register"); // Redirect to the homepage after signing in
+    const hasRedirected = sessionStorage.getItem("hasRedirected");
+
+    if (isSignedIn && !hasRedirected) {
+      sessionStorage.setItem("hasRedirected", "true");
+      router.push("/register"); // Redirect to the register page after signing in
     }
   }, [isSignedIn, router]);
 

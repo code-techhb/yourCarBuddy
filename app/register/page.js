@@ -8,13 +8,21 @@ import {
   Typography,
   Modal,
   TextField,
+  Stack
 } from "@mui/material";
 import { styled } from "@mui/material/styles";
+import { useUser } from "@clerk/nextjs"; // Import useUser
+import { addUserCar } from "../utils/page";
+import { useRouter } from "next/navigation";
 
+import Navbar from "../components/navbar";
 // ---------------- component -----------------
 export default function RegisterForm() {
   // ---------------- state management vars -----------------
   const [open, setOpen] = useState(false);
+  const { user } = useUser(); 
+  const userId = user?.id; 
+  const router = useRouter();
 
   // Custom styled TextField
   const WhiteTextField = styled(TextField)({
@@ -45,10 +53,80 @@ export default function RegisterForm() {
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
   // ----------------------UI-----------------------------
+
+  // -----------------On submit -----------------
+  const handleSubmit = async (event) => {
+    event.preventDefault();
+    const formData = new FormData(event.currentTarget);
+  
+    const vin = formData.get('VIN');
+  
+    let make = '';
+    let model = '';
+    let modelYear = '';
+    let brand = '';
+  
+    // Fetch vehicle data
+    try {
+      const response = await fetch(`https://vpic.nhtsa.dot.gov/api/vehicles/DecodeVin/${vin}?format=json`);
+      const data = await response.json();
+      const results = data.Results;
+  
+      // Extract relevant vehicle details from the response
+      results.forEach(item => {
+        if (item.Variable === 'Make') {
+          make = item.Value;
+        }
+        if (item.Variable === 'Model') {
+          model = item.Value;
+        }
+        if (item.Variable === 'Model Year') {
+          modelYear = item.Value;
+        }
+        if (item.Variable === 'Manufacturer Name') {
+          brand = item.Value;
+        }
+      });
+  
+      // Output the vehicle details
+      console.log(`Brand: ${brand}`);
+      console.log(`Make: ${make}`);
+      console.log(`Model: ${model}`);
+      console.log(`Model Year: ${modelYear}`);
+  
+      // Data to be sent to Firebase
+      const carData = {
+        VIN: formData.get('VIN'),
+        brand: brand,
+        model: model,
+        year: modelYear,
+        mileage: formData.get('mileage'),
+      };
+  
+      console.log('Data to be passed to Firebase:', carData);
+  
+      if (userId) {
+        console.log('User ID is:', userId);
+        console.log('Calling addUserCar...');
+        await addUserCar(carData, userId);
+        console.log('addUserCar has been called');
+        handleClose();
+        router.push("/profile");
+      } else {
+        console.error("User not authenticated");
+      }
+  
+    } catch (error) {
+      console.error('Error fetching vehicle data:', error);
+    }
+  };
+  
+
+
   return (
     <ThemeProvider theme={theme}>
       {/* Navbar go here */}
-
+      <Navbar></Navbar>
       {/* Outer box */}
       <Box
         width="100vw"
@@ -72,6 +150,7 @@ export default function RegisterForm() {
         </Button>
         {/* modal */}
         <Modal open={open} onClose={handleClose}>
+         
           <Box
             sx={{
               background: theme.custom.thin_background,
@@ -86,6 +165,7 @@ export default function RegisterForm() {
               flexDirection: "column",
               gap: 3,
               transform: "translate(-50%, -50%)",
+
             }}
           >
             <Typography
@@ -100,9 +180,13 @@ export default function RegisterForm() {
             >
               Please enter your car information
             </Typography>
+            
+            <form onSubmit={handleSubmit}>
+            <Stack spacing={6}>
             <WhiteTextField
               variant="standard"
-              placeholder="Car Brand"
+              placeholder="VIN"
+              name = 'VIN'
               sx={{
                 textAlign: "center",
                 fontSize: "40px",
@@ -111,44 +195,17 @@ export default function RegisterForm() {
                 color: "primary.white",
               }}
             />
-            <WhiteTextField variant="standard" placeholder="Car Model" />
-            <WhiteTextField
-              variant="standard"
-              type="number"
-              placeholder="Year"
-            />
             <WhiteTextField
               variant="standard"
               type="number"
               placeholder="Millage"
-            />
-            <WhiteTextField
-              variant="standard"
-              placeholder="What do you want to track?(oil, tires change, etc)"
+              name = 'mileage'
             />
 
-            {/* need to fix this placeholder issue */}
-            <Typography variant="body1" color="primary.white">
-              When was the last time you change it?
-            </Typography>
-            <WhiteTextField
-              variant="standard"
-              type="date"
-              // label="When was the last time you change it?"
-              fullWidth
-            />
-            {/* next */}
-            <Typography variant="body1" color="primary.white">
-              When is your car due for the next inspection?
-            </Typography>
-            <WhiteTextField
-              variant="standard"
-              type="date"
-              placeholder="When is your car due for the next inspection?"
-            />
 
             <Button
               variant="standard"
+              type="submit"
               sx={{
                 borderRadius: "20px",
                 alignSelf: "center",
@@ -160,7 +217,11 @@ export default function RegisterForm() {
             >
               Submit
             </Button>
+            </Stack>
+            </form> 
+            
           </Box>
+          
         </Modal>
       </Box>
     </ThemeProvider>
