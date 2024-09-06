@@ -38,32 +38,42 @@ import { useUser } from "@clerk/nextjs";
 const Profile = () => {
   const [rows, setRows] = useState([]);
   const router = useRouter();
-  const { user } = useUser();
-  const userId = user?.id;
+  const { user, isLoaded } = useUser();
+  const [isLoading, setIsLoading] = useState(true);
 
   // Fetch data from Firebase
   useEffect(() => {
-    if (!db) {
-      console.error("Firebase db is not initialized");
+    if (!isLoaded) return; // Wait for user to be loaded
+
+    if (!user) {
+      console.error("User not authenticated");
+      router.push('/login'); // Redirect to login if not authenticated
       return;
     }
 
     const fetchCars = async () => {
-      // const db = getFirestore();
-      const carsCollection = collection(db, "users", userId, "cars");
-      console.log(carsCollection);
-      const carSnapshot = await getDocs(carsCollection);
-      // const carList = carSnapshot.docs.map((doc) => doc.data());
-      const carList = carSnapshot.docs.map((doc) => ({
-        ...doc.data(),
-        VIN: doc.id, // The document ID is now the VIN
-      }));
-      console.log(carList);
-      setRows(carList);
+      try {
+        if (!db) {
+          console.error("Firebase db is not initialized");
+          return;
+        }
+
+        const carsCollection = collection(db, "users", user.id, "cars");
+        const carSnapshot = await getDocs(carsCollection);
+        const carList = carSnapshot.docs.map((doc) => ({
+          ...doc.data(),
+          VIN: doc.id,
+        }));
+        setRows(carList);
+      } catch (error) {
+        console.error("Error fetching cars:", error);
+      } finally {
+        setIsLoading(false);
+      }
     };
 
     fetchCars();
-  }, [userId]); //add userid here
+  }, [user, isLoaded, router]);
 
   // Handle Delete Function
   // const handleDelete = async (VIN) => {
@@ -153,7 +163,7 @@ const Profile = () => {
             <Typography marginLeft={2}>
               Welcome to Carbuddy {user?.fullName}
             </Typography>
-            <Typography marginLeft={2}>email: {user?.emailAddress}</Typography>
+            <Typography marginLeft={2}>....</Typography>
           </Box>
         </Box>
         <Box
@@ -200,13 +210,13 @@ const Profile = () => {
                       align="center"
                       sx={{ fontWeight: "bold", fontSize: 22 }}
                     >
-                      Make
+                      Model
                     </TableCell>
                     <TableCell
                       align="center"
                       sx={{ fontWeight: "bold", fontSize: 22 }}
                     >
-                      Model
+                      Year
                     </TableCell>
                     <TableCell
                       align="center"

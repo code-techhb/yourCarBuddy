@@ -14,7 +14,6 @@ import { styled } from "@mui/material/styles";
 import { useUser } from "@clerk/nextjs"; // Import useUser
 import { addUserCar } from "../utils/page";
 import { useRouter } from "next/navigation";
-
 import Navbar from "../components/navbar";
 // ---------------- component -----------------
 export default function RegisterForm() {
