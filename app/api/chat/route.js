@@ -1,25 +1,57 @@
 import { NextResponse } from "next/server";
 import OpenAI from "openai";
+import { db } from "@/firebase";
+import { collection, getDocs } from "firebase/firestore";
 
-// Fake car details (could be null if user hasn't provided information)
-const carDetails = {
-  make: "Toyota",
-  model: "Camry",
-  year: 2019,
-  mileage: 45000,
-};
+//Initialize OpenAI
+const openai = new OpenAI({
+  apiKey: process.env.OPENAI_API_KEY,
+});
+
+// Function to fetch car details from Firebase
+async function fetchCarDetails(userId) {
+  if (!userId || typeof userId !== "string") {
+    console.error("Invalid userId provided:", userId);
+    return null;
+  }
+  try {
+    const carsCollection = collection(db, "users", userId, "cars");
+    const carsSnapshot = await getDocs(carsCollection);
+
+    if (!carsSnapshot.empty) {
+      // Assuming we want to use the first car's details
+      const carDoc = carsSnapshot.docs[0];
+      const carData = carDoc.data();
+      return {
+        VIN: carDoc.id,
+        brand: carData.brand,
+        mileage: carData.mileage,
+        model: carData.model,
+        year: carData.year,
+      };
+    } else {
+      console.log("No cars found for this user");
+      return null;
+    }
+  } catch (error) {
+    console.error("Error fetching car details:", error);
+    return null;
+  }
+}
 
 // Function to generate system prompt based on available car details
 function generateSystemPrompt(carDetails) {
   let prompt = `You are a Car Buddy AI assistant designed to help car owners keep their vehicles in optimal condition. `;
 
-  if (carDetails && carDetails.make && carDetails.model) {
+  if (carDetails) {
     prompt += `You have access to the following car details:
 
-Make: ${carDetails.make}
-Model: ${carDetails.model}
-${carDetails.year ? `Year: ${carDetails.year}` : ""}
-${carDetails.mileage ? `Current Mileage: ${carDetails.mileage}` : ""}
+VIN: ${carDetails.VIN || "Not provided"}
+Brand: ${carDetails.brand || "Not provided"}
+Model: ${carDetails.model || "Not provided"}
+Year: ${carDetails.year || "Not provided"}
+Current Mileage: ${carDetails.mileage || "Not provided"}
+
 
 Use this information to provide tailored advice when possible. `;
   } else {
@@ -41,16 +73,23 @@ If you need to include an image in your response, use the format: [generate imag
   return prompt;
 }
 
-//Initialize OpenAI
-const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY,
-});
-
 export async function POST(req) {
   try {
     const data = await req.json();
     console.log("Received data:", JSON.stringify(data));
-    // Send request to OpenAI
+
+    // Extract user ID from the request
+    const userId = data.userId; // Ensure this is passed from the client
+
+    if (!userId) {
+      console.error("No userId provided in the request");
+      return NextResponse.json(
+        { error: "User ID is required" },
+        { status: 400 }
+      );
+    }
+    // Fetch car details from Firebase
+    const carDetails = await fetchCarDetails(userId);
 
     const systemPrompt = generateSystemPrompt(carDetails);
     const lastMessage = data[data.length - 1];
