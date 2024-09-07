@@ -73,16 +73,18 @@ export default function Dashboard() {
 
 
   const calculateDueInDays = (lastChangeDate, nextChangeDate) => {
-    const currentDate = new Date(lastChangeDate);
+    const currentDate = new Date();
+   
     const nextDate = new Date(nextChangeDate);
-  
+    console.log("current day", currentDate)
+    console.log("another", nextDate)
     // Calculate difference in time
-    const timeDifference = nextDate - currentDate;
+    const timeDifference = (nextDate - currentDate);
     
     // Convert time difference from milliseconds to days
     const daysDifference = Math.floor(timeDifference / (1000 * 60 * 60 * 24));
   
-    return daysDifference;
+    return daysDifference+2;
   };
 
   // ------------------------ Handle functions-------------------------
