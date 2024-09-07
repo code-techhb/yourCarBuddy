@@ -221,7 +221,7 @@ export default function Dashboard() {
       <Navbar />
       {/* outer box  */}
       <Box
-        height="100vh"
+        //height="100%"
         sx={{
           background: theme.custom.background,
           display: "flex",
@@ -238,7 +238,7 @@ export default function Dashboard() {
             m: 1,
             minWidth: 800,
             backgroundColor: "primary.secondary",
-            marginBottom: 5,
+            marginTop: 5,
             boxShadow:
               "13px 15px 24px 0px rgba(255, 255, 255, 0.25), 6px 6px 4px 0px rgba(253, 255, 243, 0.25)",
           }}
@@ -275,6 +275,7 @@ export default function Dashboard() {
             sx={{
               backgroundColor: "primary.white",
               color: "primary.black",
+              marginTop: 4,
             }}
           >
             <CardContent>
@@ -319,7 +320,6 @@ export default function Dashboard() {
                     // fontSize: "24px",
                   }}
                 >
-                  More &gt;&gt;&gt;
                 </Button>
               </Box>
             </CardContent>
