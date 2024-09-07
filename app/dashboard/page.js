@@ -47,8 +47,8 @@ export default function Dashboard() {
   const [lastChangedDate, setLastChangedDate] = useState("");
   const [nextChangeDate, setNextChangeDate] = useState("");
   const [maintenanceRecords, setMaintenanceRecords] = useState([]);
-  // ---------------------- Use effect for fetching ---------------------
 
+  // ---------------------- Use effect for fetching ---------------------
   useEffect(() => {
     const fetchCars = async () => {
       if (!isLoaded || !user) {
@@ -68,7 +68,7 @@ export default function Dashboard() {
         }));
 
         setCars(carList); // Update state with the fetched cars
-        console.log("Car Fetch", carList);
+        // console.log("Car Fetch", carList);
       } catch (error) {
         console.error("Error fetching cars: ", error);
       }
@@ -79,10 +79,9 @@ export default function Dashboard() {
 
   const calculateDueInDays = (lastChangeDate, nextChangeDate) => {
     const currentDate = new Date();
-
     const nextDate = new Date(nextChangeDate);
-    console.log("current day", currentDate);
-    console.log("another", nextDate);
+    // console.log("current day", currentDate);
+    // console.log("another", nextDate);
     // Calculate difference in time
     const timeDifference = nextDate - currentDate;
     // Convert time difference from milliseconds to days
@@ -90,52 +89,92 @@ export default function Dashboard() {
     return daysDifference + 2;
   };
 
+  // const handleDelete = async (index) => {
+  //   if (!user || !user.id) {
+  //     console.error("User not authenticated");
+  //     return;
+  //   }
+
+  //   try {
+  //     const userId = user.id;
+  //     const carsCollectionRef = collection(db, "users", user.id, "cars");
+
+  //     // Find the car document with the matching VIN
+  //     const carDocRef = doc(carsCollectionRef, car);
+  //     const carDoc = await getDoc(carDocRef);
+
+  //     if (!carDoc.exists()) {
+  //       console.error("Car not found");
+  //       return;
+  //     }
+
+  //     const carData = carDoc.data();
+  //     const maintenanceRecords = carData.maintenance || [];
+
+  //     if (index < 0 || index >= maintenanceRecords.length) {
+  //       console.error("Invalid index");
+  //       return;
+  //     }
+
+  //     // Remove the item at the specified index
+  //     const updatedMaintenanceRecords = maintenanceRecords.filter(
+  //       (_, i) => i !== index
+  //     );
+
+  //     // Update the document with the modified array
+  //     await updateDoc(carDocRef, {
+  //       maintenance: updatedMaintenanceRecords,
+  //     });
+
+  //     alert("Maintenance record deleted successfully");
+
+  //     // Update the local state
+  //     setMaintenanceRecords(updatedMaintenanceRecords);
+  //   } catch (error) {
+  //     console.error("Error deleting maintenance record: ", error);
+  //   }
+  // };
   const handleDelete = async (index) => {
-  if (!user || !user.id) {
-    console.error("User not authenticated");
-    return;
-  }
-
-  try {
-    const userId = user.id;
-    const carsCollectionRef = collection(db, "users", user.id, "cars");
-    
-    // Find the car document with the matching VIN
-    const carDocRef = doc(carsCollectionRef, car);
-    const carDoc = await getDoc(carDocRef);
-
-    if (!carDoc.exists()) {
-      console.error("Car not found");
+    if (!user || !user.id) {
+      console.error("User not authenticated");
       return;
     }
 
-    const carData = carDoc.data();
-    const maintenanceRecords = carData.maintenance || [];
+    try {
+      const userId = user.id;
+      const carsCollectionRef = collection(db, "users", user.id, "cars");
+      // Find the car document with the matching VIN
+      const carDocRef = doc(carsCollectionRef, car);
+      const carDoc = await getDoc(carDocRef);
+      console.log(carDoc);
 
-    if (index < 0 || index >= maintenanceRecords.length) {
-      console.error("Invalid index");
-      return;
+      if (!carDoc.exists()) {
+        console.error("Car not found");
+        return;
+      }
+      const carData = carDoc.data();
+      const maintenanceRecords = carData.maintenance || [];
+
+      if (index < 0 || index >= maintenanceRecords.length) {
+        console.error("Invalid index");
+        return;
+      }
+      // Remove the item at the specified index
+      const updatedMaintenanceRecords = maintenanceRecords.filter(
+        (_, i) => i !== index
+      );
+      // Update the document with the modified array
+      await updateDoc(carDocRef, {
+        maintenance: updatedMaintenanceRecords,
+      });
+
+      alert("Maintenance record deleted successfully");
+      // Update the local state
+      setMaintenanceRecords(updatedMaintenanceRecords);
+    } catch (error) {
+      console.error("Error deleting maintenance record: ", error);
     }
-
-    // Remove the item at the specified index
-    const updatedMaintenanceRecords = maintenanceRecords.filter((_, i) => i !== index);
-
-    // Update the document with the modified array
-    await updateDoc(carDocRef, {
-      maintenance: updatedMaintenanceRecords,
-    });
-
-    console.log("Maintenance record deleted successfully");
-
-    // Update the local state
-    setMaintenanceRecords(updatedMaintenanceRecords);
-
-  } catch (error) {
-    console.error("Error deleting maintenance record: ", error);
-  }
-};
-
-
+  };
   // ------------------------ Handle functions-------------------------
   useEffect(() => {
     const fetchMaintenance = async () => {
@@ -158,10 +197,10 @@ export default function Dashboard() {
         const selectedCar = carList.find((carItem) => carItem.VIN === car);
 
         if (selectedCar && selectedCar.maintenance.length > 0) {
-          const maintenanceRecord = selectedCar.maintenance;
-          console.log("Car Part:", maintenanceRecord.carPart);
-          console.log("Last Changed:", maintenanceRecord.lastChanged);
-          console.log("Next Change:", maintenanceRecord.nextChange);
+          // const maintenanceRecord = selectedCar.maintenance;
+          // console.log("Car Part:", maintenanceRecord.carPart);
+          // console.log("Last Changed:", maintenanceRecord.lastChanged);
+          // console.log("Next Change:", maintenanceRecord.nextChange);
           // Update state with maintenance records
           setMaintenanceRecords(selectedCar.maintenance);
           // console.log("here", maintenanceRecord)
@@ -193,8 +232,6 @@ export default function Dashboard() {
     setOpenAddModal(true);
   };
 
-  
-
   const handleCarPartChange = (event) => {
     setCarPart(event.target.value);
   };
@@ -207,16 +244,13 @@ export default function Dashboard() {
     setNextChangeDate(event.target.value);
   };
 
-
-
   const handleModalClose = () => {
-  setOpenAddModal(false);
-  // Reset form fields
-  setCarPart("");
-  setLastChangedDate("");
-  setNextChangeDate("");
-};
-
+    setOpenAddModal(false);
+    // Reset form fields
+    setCarPart("");
+    setLastChangedDate("");
+    setNextChangeDate("");
+  };
 
   const handleSubmit = async () => {
     if (!user || !car || !carPart || !lastChangedDate || !nextChangeDate) {
@@ -263,20 +297,15 @@ export default function Dashboard() {
 
       console.log("Maintenance records added successfully");
 
-
-
-      //handleModalClose(); // Close modal after submission
-  
+      handleModalClose(); // Close modal after submission
 
       // Clear the state after submission
       setMaintenanceRecords([]);
-
       setCarPart("");
-    setLastChangedDate("");
-    setNextChangeDate("");
+      setLastChangedDate("");
+      setNextChangeDate("");
 
-    handleModalClose();
-
+      handleModalClose();
     } catch (error) {
       console.error("Error adding maintenance records: ", error);
     }
@@ -342,115 +371,107 @@ export default function Dashboard() {
         </FormControl>
 
         {/* Maintenance Remainder list  */}
-        <Box width="800px" mb="40px" overflow="auto">
-          {/* need to figure out a way to apply the overflow to the card not the box 👆🏾 */}
+        <Box width="800px" mb="40px">
           <Card
             sx={{
               backgroundColor: "primary.white",
               color: "primary.black",
               marginTop: 4,
+              maxHeight: 400,
+              overflow: "auto",
             }}
           >
-
-
             <CardContent>
-              <Typography variant="h6">Maintenance Reminder List</Typography>
-             {/* Will have a CRUD Operation here */}
-        {maintenanceRecords.map((record, index) => (
-          <Box
-            key={index}
-            display="flex"
-            justifyContent="space-between"
-            alignItems="center"
-            flexDirection="row"
-            border="1px solid black"
-            borderRadius="5px"
-            mt="10px"
-            p="20px"
-          >
-            <DeleteIcon
-                          sx={{ cursor: "pointer", color: "GREY" }}
-                          onClick={() => handleDelete(index)}
-                        />
-            <Box>
-              <Typography variant="h6">{record.carPart}</Typography>
-              <Typography>{record.description}</Typography>
-            </Box>
-            <Box>
-              <Typography variant="body1">Due in</Typography>
-              <Typography variant="h6">
-                {calculateDueInDays(record.lastChanged, record.nextChange) > 0
-                  ? `${calculateDueInDays(record.lastChanged, record.nextChange)} Days`
-                  : "Past Due"}
-              </Typography>
-            </Box>
-          </Box>
-        ))}
-        {/* CRUD end here */}
-        {/* more button */}
-              {/* more button */}
-              <Box display="flex" justifyContent="center">
-                <Button
-                  sx={{
-                    marginTop: 2,
-                    textAlign: "center",
-                    fontFamily: "Montserrat",
-                    // fontSize: "24px",
-                  }}
+              <Box display="flex" alignItems="center">
+                <BuildIcon></BuildIcon>
+                <Typography variant="h6">Maintenance Reminder List</Typography>
+              </Box>
 
+              {maintenanceRecords.map((record, index) => (
+                <Box
+                  key={index}
+                  display="flex"
+                  justifyContent="space-between"
+                  alignItems="center"
+                  flexDirection="row"
+                  border="1px solid black"
+                  borderRadius="5px"
+                  mt="10px"
+                  p="20px"
                 >
-                  <BuildIcon></BuildIcon>
-                  <Typography variant="h6">
-                    Maintenance Reminder List
-                  </Typography>
-                </Box>
-
-                {/* Will have a CRUD Operation here */}
-                {maintenanceRecords.map((record, index) => (
-                  <Box
-                    key={index}
-                    display="flex"
-                    justifyContent="space-between"
-                    alignItems="center"
-                    flexDirection="row"
-                    border="1px solid black"
-                    borderRadius="5px"
-                    mt="10px"
-                    p="20px"
-                  >
-                    <Checkbox id={`maintenance-${index}`} />
-                    <Box>
-                      <Typography variant="h6">{record.carPart}</Typography>
-                      <Typography>{record.description}</Typography>
-                    </Box>
-                    <Box>
-                      <Typography variant="body1">Due in</Typography>
-                      <Typography variant="h6">
-                        {calculateDueInDays(
-                          record.lastChanged,
-                          record.nextChange
-                        ) > 0
-                          ? `${calculateDueInDays(
-                              record.lastChanged,
-                              record.nextChange
-                            )} Days`
-                          : "Past Due"}
-                      </Typography>
-                    </Box>
+                  <DeleteIcon
+                    sx={{ cursor: "pointer", color: "GREY" }}
+                    onClick={() => handleDelete(index)}
+                  />
+                  <Box>
+                    <Typography variant="h6">{record.carPart}</Typography>
+                    <Typography>{record.description}</Typography>
                   </Box>
-                ))}
-                {/* CRUD end here */}
-              </CardContent>
-            </Box>
+                  <Box>
+                    <Typography variant="body1">Due in</Typography>
+                    <Typography variant="h6">
+                      {calculateDueInDays(
+                        record.lastChanged,
+                        record.nextChange
+                      ) > 0
+                        ? `${calculateDueInDays(
+                            record.lastChanged,
+                            record.nextChange
+                          )} Days`
+                        : "Past Due"}
+                    </Typography>
+                  </Box>
+                </Box>
+              ))}
+              {/* CRUD end here */}
+
+              {/* Will have a CRUD Operation here
+              {maintenanceRecords.map((record, index) => (
+                <Box
+                  key={index}
+                  display="flex"
+                  justifyContent="space-between"
+                  alignItems="center"
+                  flexDirection="row"
+                  border="1px solid black"
+                  borderRadius="5px"
+                  mt="10px"
+                  p="20px"
+                >
+                  <Checkbox id={`maintenance-${index}`} />
+                  <Box>
+                    <Typography variant="h6">{record.carPart}</Typography>
+                    <Typography>{record.description}</Typography>
+                  </Box>
+                  <Box>
+                    <Typography variant="body1">Due in</Typography>
+                    <Typography variant="h6">
+                      {calculateDueInDays(
+                        record.lastChanged,
+                        record.nextChange
+                      ) > 0
+                        ? `${calculateDueInDays(
+                            record.lastChanged,
+                            record.nextChange
+                          )} Days`
+                        : "Past Due"}
+                    </Typography>
+                  </Box>
+                </Box>
+              ))} */}
+              {/* CRUD end here */}
+            </CardContent>
           </Card>
         </Box>
 
         {/* Maintenance log */}
-        <Box width="800px" overflow="auto" mb="10px">
+        <Box width="800px" mb="10px">
           <Card
             sx={{
               backgroundColor: "primary.white",
               color: "primary.black",
+              maxHeight: 350,
+              overflow: "auto",
             }}
           >
             <CardContent>
@@ -527,7 +548,6 @@ export default function Dashboard() {
                         <TextField
                           variant="standard"
                           type="date"
-                          placeholder="when is the next time you should change it by?"
                           value={nextChangeDate}
                           onChange={handleNextChangeDateChange}
                         />
