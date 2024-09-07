@@ -2,6 +2,7 @@
 import { useEffect, useState } from "react";
 import theme from "../components/theme";
 import * as React from "react";
+import DeleteIcon from "@mui/icons-material/Delete";
 import {
   Box,
   Button,
@@ -87,6 +88,52 @@ export default function Dashboard() {
     return daysDifference+2;
   };
 
+  const handleDelete = async (index) => {
+  if (!user || !user.id) {
+    console.error("User not authenticated");
+    return;
+  }
+
+  try {
+    const userId = user.id;
+    const carsCollectionRef = collection(db, "users", user.id, "cars");
+    
+    // Find the car document with the matching VIN
+    const carDocRef = doc(carsCollectionRef, car);
+    const carDoc = await getDoc(carDocRef);
+
+    if (!carDoc.exists()) {
+      console.error("Car not found");
+      return;
+    }
+
+    const carData = carDoc.data();
+    const maintenanceRecords = carData.maintenance || [];
+
+    if (index < 0 || index >= maintenanceRecords.length) {
+      console.error("Invalid index");
+      return;
+    }
+
+    // Remove the item at the specified index
+    const updatedMaintenanceRecords = maintenanceRecords.filter((_, i) => i !== index);
+
+    // Update the document with the modified array
+    await updateDoc(carDocRef, {
+      maintenance: updatedMaintenanceRecords,
+    });
+
+    console.log("Maintenance record deleted successfully");
+
+    // Update the local state
+    setMaintenanceRecords(updatedMaintenanceRecords);
+
+  } catch (error) {
+    console.error("Error deleting maintenance record: ", error);
+  }
+};
+
+
   // ------------------------ Handle functions-------------------------
 
   useEffect(() => {
@@ -147,9 +194,7 @@ export default function Dashboard() {
     setOpenAddModal(true);
   };
 
-  const handleModalClose = () => {
-    setOpenAddModal(false);
-  };
+  
 
   const handleCarPartChange = (event) => {
     setCarPart(event.target.value);
@@ -162,6 +207,15 @@ export default function Dashboard() {
   const handleNextChangeDateChange = (event) => {
     setNextChangeDate(event.target.value);
   };
+
+
+  const handleModalClose = () => {
+  setOpenAddModal(false);
+  // Reset form fields
+  setCarPart("");
+  setLastChangedDate("");
+  setNextChangeDate("");
+};
 
   
   const handleSubmit = async () => {
@@ -204,10 +258,17 @@ export default function Dashboard() {
       });
   
       console.log("Maintenance records added successfully");
-      handleModalClose(); // Close modal after submission
+      //handleModalClose(); // Close modal after submission
   
       // Clear the state after submission
       setMaintenanceRecords([]);
+
+      setCarPart("");
+    setLastChangedDate("");
+    setNextChangeDate("");
+
+    handleModalClose();
+
     } catch (error) {
       console.error("Error adding maintenance records: ", error);
     }
@@ -295,7 +356,10 @@ export default function Dashboard() {
             mt="10px"
             p="20px"
           >
-            <Checkbox id={`maintenance-${index}`} />
+            <DeleteIcon
+                          sx={{ cursor: "pointer", color: "GREY" }}
+                          onClick={() => handleDelete(index)}
+                        />
             <Box>
               <Typography variant="h6">{record.carPart}</Typography>
               <Typography>{record.description}</Typography>
