@@ -12,7 +12,6 @@ import {
   CardContent,
   List,
   ListItem,
-  ListItemText,
   TextField,
   FormControl,
   MenuItem,
@@ -27,7 +26,13 @@ import BottomNav from "../components/bottom_nav";
 import Navbar from "../components/navbar";
 import { useUser } from "@clerk/nextjs";
 import { db } from "@/firebase";
-import { collection, getDocs, doc, updateDoc, getDoc } from "firebase/firestore";
+import {
+  collection,
+  getDocs,
+  doc,
+  updateDoc,
+  getDoc,
+} from "firebase/firestore";
 import { carPartsCheckedFrequently } from "@/app/utils/elements";
 
 export default function Dashboard() {
@@ -53,7 +58,7 @@ export default function Dashboard() {
 
       try {
         // Assuming you have a collection named 'cars' under 'users' (you may need to change this based on your Firestore structure)
-        const userId = user.id; // Safely accessing the userId
+        const userId = user.id;
         const carsCollectionRef = collection(db, "users", userId, "cars");
         const carDocs = await getDocs(carsCollectionRef);
 
@@ -63,7 +68,7 @@ export default function Dashboard() {
         }));
 
         setCars(carList); // Update state with the fetched cars
-        console.log('Car Fetch', carList)
+        console.log("Car Fetch", carList);
       } catch (error) {
         console.error("Error fetching cars: ", error);
       }
@@ -72,20 +77,17 @@ export default function Dashboard() {
     fetchCars();
   }, [user, isLoaded]);
 
-
   const calculateDueInDays = (lastChangeDate, nextChangeDate) => {
     const currentDate = new Date();
-   
+
     const nextDate = new Date(nextChangeDate);
-    console.log("current day", currentDate)
-    console.log("another", nextDate)
+    console.log("current day", currentDate);
+    console.log("another", nextDate);
     // Calculate difference in time
-    const timeDifference = (nextDate - currentDate);
-    
+    const timeDifference = nextDate - currentDate;
     // Convert time difference from milliseconds to days
     const daysDifference = Math.floor(timeDifference / (1000 * 60 * 60 * 24));
-  
-    return daysDifference+2;
+    return daysDifference + 2;
   };
 
   const handleDelete = async (index) => {
@@ -135,26 +137,25 @@ export default function Dashboard() {
 
 
   // ------------------------ Handle functions-------------------------
-
   useEffect(() => {
     const fetchMaintenance = async () => {
       if (!car || !isLoaded || !user) {
         return;
       }
-  
+
       try {
         const userId = user.id;
         const carsCollectionRef = collection(db, "users", userId, "cars");
         const carDocs = await getDocs(carsCollectionRef);
-  
+
         const carList = carDocs.docs.map((doc) => ({
           id: doc.id,
           ...doc.data(),
         }));
-  
+
         setCars(carList);
 
-        const selectedCar = carList.find(carItem => carItem.VIN === car);
+        const selectedCar = carList.find((carItem) => carItem.VIN === car);
 
         if (selectedCar && selectedCar.maintenance.length > 0) {
           const maintenanceRecord = selectedCar.maintenance;
@@ -163,9 +164,9 @@ export default function Dashboard() {
           console.log("Next Change:", maintenanceRecord.nextChange);
           // Update state with maintenance records
           setMaintenanceRecords(selectedCar.maintenance);
-          console.log("here", maintenanceRecord)
+          // console.log("here", maintenanceRecord)
         } else {
-          console.log("Car not found or no maintenance records available.");
+          alert("Car not found or no maintenance records available.");
           setMaintenanceRecords([]);
         }
       } catch (error) {
@@ -180,10 +181,8 @@ export default function Dashboard() {
     setCar(event.target.value);
   };
 
-
   const handleClose = () => {
     setOpen(false);
-    
   };
 
   const handleOpen = () => {
@@ -199,14 +198,15 @@ export default function Dashboard() {
   const handleCarPartChange = (event) => {
     setCarPart(event.target.value);
   };
-  
+
   const handleLastChangedDateChange = (event) => {
     setLastChangedDate(event.target.value);
   };
-  
+
   const handleNextChangeDateChange = (event) => {
     setNextChangeDate(event.target.value);
   };
+
 
 
   const handleModalClose = () => {
@@ -217,49 +217,57 @@ export default function Dashboard() {
   setNextChangeDate("");
 };
 
-  
+
   const handleSubmit = async () => {
     if (!user || !car || !carPart || !lastChangedDate || !nextChangeDate) {
       console.error("All fields are required");
       return;
     }
-  
+
     const newRecord = {
       carPart,
       lastChanged: lastChangedDate,
-      nextChange: nextChangeDate
+      nextChange: nextChangeDate,
     };
-  
+
     try {
       const userId = user.id;
       const carsCollectionRef = collection(db, "users", userId, "cars");
-      const selectedCar = cars.find(c => c.VIN === car);
-  
+      const selectedCar = cars.find((c) => c.VIN === car);
+
       if (!selectedCar || !selectedCar.id) {
         console.error("Selected car not found or invalid");
         return;
       }
-  
+
       const carDocRef = doc(carsCollectionRef, selectedCar.id);
-  
+
       // Fetch the existing maintenance records
       const carDoc = await getDoc(carDocRef);
-      const existingMaintenance = carDoc.exists() ? carDoc.data().maintenance : [];
-  
+      const existingMaintenance = carDoc.exists()
+        ? carDoc.data().maintenance
+        : [];
+
       // Ensure existingMaintenance is an array
-      const maintenanceArray = Array.isArray(existingMaintenance) ? existingMaintenance : [];
-  
+      const maintenanceArray = Array.isArray(existingMaintenance)
+        ? existingMaintenance
+        : [];
+
       // Combine existing records with new records
       const updatedMaintenance = [...maintenanceArray, newRecord];
-  
+
       // Update the Firestore document with the combined records
       await updateDoc(carDocRef, {
-        maintenance: updatedMaintenance
+        maintenance: updatedMaintenance,
       });
-  
+
       console.log("Maintenance records added successfully");
+
+
+
       //handleModalClose(); // Close modal after submission
   
+
       // Clear the state after submission
       setMaintenanceRecords([]);
 
@@ -273,43 +281,46 @@ export default function Dashboard() {
       console.error("Error adding maintenance records: ", error);
     }
   };
-  
-  
-  
-  
+
   // ---------------------- UI ----------------------
   return (
     <ThemeProvider theme={theme}>
-      {/* Navbar will go here */}
       <Navbar />
       {/* outer box  */}
       <Box
-        //height="100%"
+        height="100vh"
         sx={{
           background: theme.custom.background,
           display: "flex",
           justifyContent: "center",
           alignItems: "center",
           flexDirection: "column",
-          width: "100vw",
-          maxWidth: "100%",
         }}
       >
         {/* dropdown */}
         <FormControl
           sx={{
-            m: 1,
-            minWidth: 800,
+            mb: 2,
+            width: 800,
             backgroundColor: "primary.secondary",
             marginTop: 5,
             boxShadow:
-              "13px 15px 24px 0px rgba(255, 255, 255, 0.25), 6px 6px 4px 0px rgba(253, 255, 243, 0.25)",
+              "13px 15px 24px 0px rgba(255, 255, 255, 0.2), 6px 6px 4px 0px rgba(253, 255, 243, 0.2)",
           }}
         >
-          <InputLabel id="demo-simple-select-label">Select Your Car</InputLabel>
+          <InputLabel
+            id="demo-simple-select-standard-label"
+            sx={{
+              color: "primary.black",
+              padding: "5px",
+            }}
+          >
+            Select your car
+          </InputLabel>
           <Select
             labelId="demo-simple-select-label"
             id="demo-simple-select"
+            variant="standard"
             open={open}
             onClose={handleClose}
             onOpen={handleOpen}
@@ -330,10 +341,9 @@ export default function Dashboard() {
           </Select>
         </FormControl>
 
-
-        
         {/* Maintenance Remainder list  */}
-        <Box width="800px" mb="40px">
+        <Box width="800px" mb="40px" overflow="auto">
+          {/* need to figure out a way to apply the overflow to the card not the box 👆🏾 */}
           <Card
             sx={{
               backgroundColor: "primary.white",
@@ -341,6 +351,8 @@ export default function Dashboard() {
               marginTop: 4,
             }}
           >
+
+
             <CardContent>
               <Typography variant="h6">Maintenance Reminder List</Typography>
              {/* Will have a CRUD Operation here */}
@@ -385,15 +397,56 @@ export default function Dashboard() {
                     fontFamily: "Montserrat",
                     // fontSize: "24px",
                   }}
+
                 >
-                </Button>
-              </Box>
-            </CardContent>
+                  <BuildIcon></BuildIcon>
+                  <Typography variant="h6">
+                    Maintenance Reminder List
+                  </Typography>
+                </Box>
+
+                {/* Will have a CRUD Operation here */}
+                {maintenanceRecords.map((record, index) => (
+                  <Box
+                    key={index}
+                    display="flex"
+                    justifyContent="space-between"
+                    alignItems="center"
+                    flexDirection="row"
+                    border="1px solid black"
+                    borderRadius="5px"
+                    mt="10px"
+                    p="20px"
+                  >
+                    <Checkbox id={`maintenance-${index}`} />
+                    <Box>
+                      <Typography variant="h6">{record.carPart}</Typography>
+                      <Typography>{record.description}</Typography>
+                    </Box>
+                    <Box>
+                      <Typography variant="body1">Due in</Typography>
+                      <Typography variant="h6">
+                        {calculateDueInDays(
+                          record.lastChanged,
+                          record.nextChange
+                        ) > 0
+                          ? `${calculateDueInDays(
+                              record.lastChanged,
+                              record.nextChange
+                            )} Days`
+                          : "Past Due"}
+                      </Typography>
+                    </Box>
+                  </Box>
+                ))}
+                {/* CRUD end here */}
+              </CardContent>
+            </Box>
           </Card>
         </Box>
 
         {/* Maintenance log */}
-        <Box width="800px" mb="40px">
+        <Box width="800px" overflow="auto" mb="10px">
           <Card
             sx={{
               backgroundColor: "primary.white",
@@ -409,22 +462,9 @@ export default function Dashboard() {
                 }}
               >
                 <Typography variant="h6">Maintenance Log</Typography>
-                <Box overflow="auto">
-                  <Button
-                    variant="outlined"
-                    sx={{
-                      marginRight: 1,
-                      borderRadius: "20px",
-                      alignSelf: "center",
-                      px: "15px",
-                      width: "120px",
-                      color: "primary.black",
-                      fontFamily: "Montserrat",
-                    }}
-                  >
-                    Edit
-                  </Button>
-                  {/* // ---------------- add modal ---------------------- */}
+
+                {/* add modal */}
+                <Box>
                   <Modal open={openAddModal} onClose={handleModalClose}>
                     <Box
                       sx={{
@@ -510,7 +550,7 @@ export default function Dashboard() {
                       </Stack>
                     </Box>
                   </Modal>
-
+                  {/* add button */}
                   <Button
                     variant="contained"
                     sx={{
@@ -521,6 +561,7 @@ export default function Dashboard() {
                       backgroundColor: "primary.secondary",
                       color: "primary.black",
                       fontFamily: "Montserrat",
+                      mb: 1,
                     }}
                     onClick={handleModalOpen}
                     disabled={!car}
@@ -538,83 +579,99 @@ export default function Dashboard() {
                 flexDirection="row"
                 mt="20px"
               >
+                <Box width="800px" mb="40px">
+                  <Card
+                    sx={{
+                      backgroundColor: "primary.white",
+                      color: "primary.black",
+                    }}
+                  >
+                    <CardContent>
+                      {maintenanceRecords.length === 0 ? (
+                        <Typography color="red">
+                          <em>
+                            No maintenance records available yet.
+                            <br />
+                            Please select a car first!
+                          </em>
+                        </Typography>
+                      ) : (
+                        <Box overflow={"auto"}>
+                          {/* Header Row */}
+                          <Box
+                            sx={{
+                              display: "flex",
+                              justifyContent: "space-between",
+                              alignItems: "center",
+                              mb: 1, // margin bottom for spacing
+                              borderBottom: "1px solid",
+                              borderColor: "divider",
+                            }}
+                          >
+                            <Box sx={{ flex: 2 }}>
+                              <Typography
+                                fontFamily="arial"
+                                marginLeft={2}
+                                variant="subtitle1"
+                                fontWeight="bold"
+                              >
+                                CarPart
+                              </Typography>
+                            </Box>
+                            <Box sx={{ flex: 1, textAlign: "left" }}>
+                              <Typography
+                                fontFamily="arial"
+                                variant="subtitle1"
+                                fontWeight="bold"
+                              >
+                                Last Date
+                              </Typography>
+                            </Box>
+                            <Box sx={{ flex: 1, textAlign: "right" }}>
+                              <Typography
+                                fontFamily="arial"
+                                variant="subtitle1"
+                                fontWeight="bold"
+                              >
+                                Next Date
+                              </Typography>
+                            </Box>
+                          </Box>
 
-;
-
-<Box width="800px" mb="40px">
-  <Card
-    sx={{
-      backgroundColor: "primary.white",
-      color: "primary.black",
-    }}
-  >
-    <CardContent>
-      
-      {maintenanceRecords.length === 0 ? (
-        <Typography>
-          <em>No maintenance records available</em>
-        </Typography>
-      ) : (
-        <Box>
-          {/* Header Row */}
-          <Box
-            sx={{
-              display: 'flex',
-              justifyContent: 'space-between',
-              alignItems: 'center',
-              mb: 1, // margin bottom for spacing
-              borderBottom: '1px solid', // optional border for visual separation
-              borderColor: 'divider'
-            }}
-          >
-            <Box sx={{ flex: 2 }}>
-              <Typography fontFamily='arial'marginLeft={2} variant="subtitle1" fontWeight="bold">
-                CarPart
-              </Typography>
-            </Box>
-            <Box sx={{ flex: 1, textAlign: 'left' }}>
-              <Typography fontFamily='arial' variant="subtitle1" fontWeight="bold">
-                Last Date
-              </Typography>
-            </Box>
-            <Box sx={{ flex: 1, textAlign: 'right' }}>
-              <Typography fontFamily='arial' variant="subtitle1" fontWeight="bold">
-                Next Date
-              </Typography>
-            </Box>
-          </Box>
-
-          {/* Data Rows */}
-          <List>
-            {maintenanceRecords.map((record, index) => (
-              <ListItem key={index} sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                <Box sx={{ flex: 2 }}>
-                  <Typography variant="body1">
-                    {record.carPart}
-                  </Typography>
+                          {/* Data Rows */}
+                          <List>
+                            {maintenanceRecords.map((record, index) => (
+                              <ListItem
+                                key={index}
+                                sx={{
+                                  display: "flex",
+                                  justifyContent: "space-between",
+                                  alignItems: "center",
+                                }}
+                              >
+                                <Box sx={{ flex: 2 }}>
+                                  <Typography variant="body1">
+                                    {record.carPart}
+                                  </Typography>
+                                </Box>
+                                <Box sx={{ flex: 1, textAlign: "left" }}>
+                                  <Typography variant="body1">
+                                    {record.lastChanged}
+                                  </Typography>
+                                </Box>
+                                <Box sx={{ flex: 1, textAlign: "right" }}>
+                                  <Typography variant="body1">
+                                    {record.nextChange}
+                                  </Typography>
+                                </Box>
+                              </ListItem>
+                            ))}
+                          </List>
+                        </Box>
+                      )}
+                    </CardContent>
+                  </Card>
                 </Box>
-                <Box sx={{ flex: 1, textAlign: 'left' }}>
-                  <Typography variant="body1">
-                    {record.lastChanged}
-                  </Typography>
-                </Box>
-                <Box sx={{ flex: 1, textAlign: 'right' }}>
-                  <Typography variant="body1">
-                    {record.nextChange}
-                  </Typography>
-                </Box>
-              </ListItem>
-            ))}
-          </List>
-        </Box>
-      )}
-    </CardContent>
-  </Card>
-</Box>
-
-                {/* <Typography>Oil changed</Typography>
-                <TextField type="date" variant="standard" />
-                <TextField type="date" variant="standard" /> */}
               </Box>
             </CardContent>
           </Card>
