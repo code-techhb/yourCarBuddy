@@ -19,16 +19,22 @@ async function fetchCarDetails(userId) {
     const carsSnapshot = await getDocs(carsCollection);
 
     if (!carsSnapshot.empty) {
-      // Assuming we want to use the first car's details
-      const carDoc = carsSnapshot.docs[0];
-      const carData = carDoc.data();
-      return {
-        VIN: carDoc.id,
-        brand: carData.brand,
-        mileage: carData.mileage,
-        model: carData.model,
-        year: carData.year,
-      };
+      const cars = [];
+
+      // Using forEach to iterate over each document
+      carsSnapshot.forEach((carDoc) => {
+        const carData = carDoc.data();
+        console.log(carDoc);
+
+        cars.push({
+          VIN: carDoc.id, // Document ID used as VIN
+          brand: carData.brand, // Extracting brand
+          mileage: carData.mileage, // Extracting mileage
+          model: carData.model, // Extracting model
+          year: carData.year, // Extracting year
+        });
+      });
+      return cars;
     } else {
       console.log("No cars found for this user");
       return null;
@@ -39,28 +45,36 @@ async function fetchCarDetails(userId) {
   }
 }
 
-// Function to generate system prompt based on available car details
 function generateSystemPrompt(carDetails) {
   let prompt = `You are a Car Buddy AI assistant designed to help car owners keep their vehicles in optimal condition. `;
 
-  if (carDetails) {
-    prompt += `You have access to the following car details:
+  if (carDetails && carDetails.length > 0) {
+    prompt += `The user has the following cars associated with their account:\n\n`;
 
-VIN: ${carDetails.VIN || "Not provided"}
-Brand: ${carDetails.brand || "Not provided"}
-Model: ${carDetails.model || "Not provided"}
-Year: ${carDetails.year || "Not provided"}
-Current Mileage: ${carDetails.mileage || "Not provided"}
+    carDetails.forEach((car, index) => {
+      prompt += `${index + 1}. ${car.brand || "Unknown"} ${
+        car.model || "Unknown"
+      } (${car.year || "Year unknown"})\n`;
+    });
 
+    prompt += `\nYour first response should be to list these cars and ask the user which one they want to know more about or get advice for. Once they choose, you can provide more detailed information and advice for that specific car.
+
+After the user selects a car, you will have access to the following details for the chosen car:
+
+VIN: [Will be provided after user selection]
+Brand: [Will be provided after user selection]
+Model: [Will be provided after user selection]
+Year: [Will be provided after user selection]
+Current Mileage: [Will be provided after user selection]
 
 Use this information to provide tailored advice when possible. `;
   } else {
-    prompt += `The user hasn't provided specific car details. `;
+    prompt += `The user hasn't provided any car details. Your first response should ask them if they would like to add a car to their profile, and if so, ask for the brand, model, and year of their car. `;
   }
 
   prompt += `Your responses should:
 
-1. Be specific to the user's car when details are available, or provide general advice if not.
+1. Be specific to the user's chosen car when details are available, or provide general advice if not.
 2. Provide actionable advice and steps.
 3. Recommend professional help for complex issues.
 4. Explain technical terms in simple language.
@@ -75,11 +89,12 @@ If you need to include an image in your response, use the format: [generate imag
 
 export async function POST(req) {
   try {
-    const data = await req.json();
+    const body = await req.json();
+    const data = body.messages;
     console.log("Received data:", JSON.stringify(data));
 
     // Extract user ID from the request
-    const userId = data.userId; // Ensure this is passed from the client
+    const userId = body.userId; // Ensure this is passed from the client
 
     if (!userId) {
       console.error("No userId provided in the request");

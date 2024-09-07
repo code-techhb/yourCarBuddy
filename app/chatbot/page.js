@@ -17,6 +17,8 @@ import Navbar from "../components/navbar";
 import { MuiMarkdown } from "mui-markdown";
 import PhotoCamera from "@mui/icons-material/PhotoCamera"; // Icon for the upload button
 import BottomNav from "../components/bottom_nav";
+import { useUser } from "@clerk/nextjs"; // Import useUser
+import RegisterForm from "../register/page";
 
 export default function Home() {
   // --------------------------------- State Management vars -----------------------
@@ -30,6 +32,9 @@ export default function Home() {
   const [message, setMessage] = useState("");
   const fileInputRef = useRef(null);
 
+  const { user } = useUser();
+  const userId = user?.id;
+
   // --------------------------------- event handler functions -------------------------------
   // function to send message to chatbot
   const sendMessage = async () => {
@@ -40,13 +45,15 @@ export default function Home() {
     ]);
     setMessage("");
 
+    const allMessages = [...messages, { role: "user", content: message }];
+
     // fetch api
     const response = fetch("/api/chat", {
       method: "POST",
       headers: {
         "content-Type": "application/json",
       },
-      body: JSON.stringify([...messages, { role: "user", content: message }]),
+      body: JSON.stringify({ messages: allMessages, userId: userId }),
     }).then(async (res) => {
       const reader = res.body.getReader();
       const decoder = new TextDecoder(); //decode the text from api
