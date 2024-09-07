@@ -62,7 +62,7 @@ export default function Dashboard() {
         }));
 
         setCars(carList); // Update state with the fetched cars
-        console.log("Cars fetched:", carList); // Log fetched cars to ensure they are being fetched
+        console.log('Car Fetch', carList)
       } catch (error) {
         console.error("Error fetching cars: ", error);
       }
@@ -73,12 +73,54 @@ export default function Dashboard() {
 
   // ------------------------ Handle functions-------------------------
 
+  useEffect(() => {
+    const fetchMaintenance = async () => {
+      if (!car || !isLoaded || !user) {
+        return;
+      }
+  
+      try {
+        const userId = user.id;
+        const carsCollectionRef = collection(db, "users", userId, "cars");
+        const carDocs = await getDocs(carsCollectionRef);
+  
+        const carList = carDocs.docs.map((doc) => ({
+          id: doc.id,
+          ...doc.data(),
+        }));
+  
+        setCars(carList);
+
+        const selectedCar = carList.find(carItem => carItem.VIN === car);
+
+        if (selectedCar && selectedCar.maintenance.length > 0) {
+          const maintenanceRecord = selectedCar.maintenance;
+          console.log("Car Part:", maintenanceRecord.carPart);
+          console.log("Last Changed:", maintenanceRecord.lastChanged);
+          console.log("Next Change:", maintenanceRecord.nextChange);
+          // Update state with maintenance records
+          setMaintenanceRecords(selectedCar.maintenance);
+          console.log("here", maintenanceRecord)
+        } else {
+          console.log("Car not found or no maintenance records available.");
+          setMaintenanceRecords([]);
+        }
+      } catch (error) {
+        console.error("Error fetching maintenance: ", error);
+      }
+    };
+
+    fetchMaintenance();
+  }, [car, isLoaded, user]);
+
   const handleChange = (event) => {
     setCar(event.target.value);
   };
 
+
   const handleClose = () => {
     setOpen(false);
+    
   };
 
   const handleOpen = () => {
@@ -105,6 +147,7 @@ export default function Dashboard() {
     setNextChangeDate(event.target.value);
   };
 
+  
   const handleSubmit = async () => {
     if (!user || !car || !carPart || !lastChangedDate || !nextChangeDate) {
       console.error("All fields are required");
@@ -298,7 +341,7 @@ export default function Dashboard() {
                   marginTop: 2,
                 }}
               >
-                <Typography variant="h6">Log</Typography>
+                <Typography variant="h6">Maintenance Log</Typography>
                 <Box overflow="auto">
                   <Button
                     variant="outlined"
@@ -428,9 +471,83 @@ export default function Dashboard() {
                 flexDirection="row"
                 mt="20px"
               >
-                <Typography>Oil changed</Typography>
+
+;
+
+<Box width="800px" mb="40px">
+  <Card
+    sx={{
+      backgroundColor: "primary.white",
+      color: "primary.black",
+    }}
+  >
+    <CardContent>
+      
+      {maintenanceRecords.length === 0 ? (
+        <Typography>
+          <em>No maintenance records available</em>
+        </Typography>
+      ) : (
+        <Box>
+          {/* Header Row */}
+          <Box
+            sx={{
+              display: 'flex',
+              justifyContent: 'space-between',
+              alignItems: 'center',
+              mb: 1, // margin bottom for spacing
+              borderBottom: '1px solid', // optional border for visual separation
+              borderColor: 'divider'
+            }}
+          >
+            <Box sx={{ flex: 2 }}>
+              <Typography fontFamily='arial'marginLeft={2} variant="subtitle1" fontWeight="bold">
+                CarPart
+              </Typography>
+            </Box>
+            <Box sx={{ flex: 1, textAlign: 'left' }}>
+              <Typography fontFamily='arial' variant="subtitle1" fontWeight="bold">
+                Last Date
+              </Typography>
+            </Box>
+            <Box sx={{ flex: 1, textAlign: 'right' }}>
+              <Typography fontFamily='arial' variant="subtitle1" fontWeight="bold">
+                Next Date
+              </Typography>
+            </Box>
+          </Box>
+
+          {/* Data Rows */}
+          <List>
+            {maintenanceRecords.map((record, index) => (
+              <ListItem key={index} sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                <Box sx={{ flex: 2 }}>
+                  <Typography variant="body1">
+                    {record.carPart}
+                  </Typography>
+                </Box>
+                <Box sx={{ flex: 1, textAlign: 'left' }}>
+                  <Typography variant="body1">
+                    {record.lastChanged}
+                  </Typography>
+                </Box>
+                <Box sx={{ flex: 1, textAlign: 'right' }}>
+                  <Typography variant="body1">
+                    {record.nextChange}
+                  </Typography>
+                </Box>
+              </ListItem>
+            ))}
+          </List>
+        </Box>
+      )}
+    </CardContent>
+  </Card>
+</Box>
+
+                {/* <Typography>Oil changed</Typography>
                 <TextField type="date" variant="standard" />
-                <TextField type="date" variant="standard" />
+                <TextField type="date" variant="standard" /> */}
               </Box>
             </CardContent>
           </Card>
