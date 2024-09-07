@@ -3,22 +3,20 @@ import theme from "@/app/components/theme";
 import Navbar from "@/app/components/navbar";
 import Footer from "@/app/components/footer";
 import { ThemeProvider, Box, Paper, Typography, Button } from "@mui/material";
-import { SignIn } from "@clerk/nextjs";
+import { SignUp } from "@clerk/nextjs";
 import { useRouter } from "next/navigation";
+import Theme from "@/app/components/theme";
 // ---------------------- const vars -----------------
 const clerkTheme = {
   variables: {
     fontSize: "16px",
-    // fontFamily: 'Lato',
+    fontFamily: "Montserrat",
   },
 };
 
 export default function SignUpPage() {
   const router = useRouter();
-  // ---------------------- handle function -----------------
-  const goBack = async () => {
-    router.push("/");
-  };
+
   // ----------------- UI ------------------
   return (
     <ThemeProvider theme={theme}>
@@ -28,29 +26,23 @@ export default function SignUpPage() {
           height: "100vh",
           display: "flex",
           flexDirection: "column",
+          backgroundColor: "primary.main",
         }}
       >
         {/* Nav bar */}
         <Navbar />
-
-        {/* Go Back Button */}
-        <Box position="absolute" top={130} left={20}>
-          <Button variant="contained" onClick={goBack}>
-            Go Back
-          </Button>
-        </Box>
-
         {/* form bg */}
         <Box
           sx={{
             flex: 1,
             display: "flex",
             justifyContent: "center",
+            flexDirection: "column",
             alignItems: "center",
           }}
         >
           <Paper
-            elevation={24}
+            //elevation={24}
             sx={{
               p: 4,
               maxWidth: "sm",
@@ -67,16 +59,24 @@ export default function SignUpPage() {
               mb="10px"
               sx={{
                 textAlign: "center",
-                fontFamily: "Mina",
+                fontFamily: "Anton",
                 fontSize: "32px",
                 fontStyle: "normal",
                 fontWeight: 700,
-                color: "text.light",
+                color: Theme.palette.text.green,
+                marginBottom: "40px",
+                lineHeight: "1.5 !important", // Force the line height to apply
+                letterSpacing: "0.05em",
               }}
             >
-              Happy to see you back 🎊
+              Welcome to Car Buddy!
             </Typography>
-            <SignIn appearance={{ baseTheme: clerkTheme }} />
+            <SignUp
+              appearance={{
+                baseTheme: clerkTheme,
+                variables: { colorPrimary: "#00D779" },
+              }}
+            />
           </Paper>
         </Box>
 

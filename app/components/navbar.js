@@ -211,6 +211,7 @@ const Navbar = () => {
                   </Button>
                 </SignUpButton>
               </SignedOut>
+
               <SignedIn>
                 <Button
                   variant="text"
