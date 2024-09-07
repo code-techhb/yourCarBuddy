@@ -26,7 +26,7 @@ import BottomNav from "../components/bottom_nav";
 import Navbar from "../components/navbar";
 import { useUser } from "@clerk/nextjs";
 import { db } from "@/firebase";
-import { collection, getDocs } from "firebase/firestore";
+import { collection, getDocs, doc, updateDoc, getDoc } from "firebase/firestore";
 import { carPartsCheckedFrequently } from "@/app/utils/elements";
 
 export default function Dashboard() {
@@ -38,7 +38,9 @@ export default function Dashboard() {
   const [open, setOpen] = React.useState(false);
   const [cars, setCars] = useState([]);
   const [carPart, setCarPart] = useState("");
-
+  const [lastChangedDate, setLastChangedDate] = useState("");
+  const [nextChangeDate, setNextChangeDate] = useState("");
+  const [maintenanceRecords, setMaintenanceRecords] = useState([]);
   // ---------------------- Use effect for fetching ---------------------
 
   useEffect(() => {
@@ -94,6 +96,67 @@ export default function Dashboard() {
   const handleCarPartChange = (event) => {
     setCarPart(event.target.value);
   };
+  
+  const handleLastChangedDateChange = (event) => {
+    setLastChangedDate(event.target.value);
+  };
+  
+  const handleNextChangeDateChange = (event) => {
+    setNextChangeDate(event.target.value);
+  };
+
+  const handleSubmit = async () => {
+    if (!user || !car || !carPart || !lastChangedDate || !nextChangeDate) {
+      console.error("All fields are required");
+      return;
+    }
+  
+    const newRecord = {
+      carPart,
+      lastChanged: lastChangedDate,
+      nextChange: nextChangeDate
+    };
+  
+    try {
+      const userId = user.id;
+      const carsCollectionRef = collection(db, "users", userId, "cars");
+      const selectedCar = cars.find(c => c.VIN === car);
+  
+      if (!selectedCar || !selectedCar.id) {
+        console.error("Selected car not found or invalid");
+        return;
+      }
+  
+      const carDocRef = doc(carsCollectionRef, selectedCar.id);
+  
+      // Fetch the existing maintenance records
+      const carDoc = await getDoc(carDocRef);
+      const existingMaintenance = carDoc.exists() ? carDoc.data().maintenance : [];
+  
+      // Ensure existingMaintenance is an array
+      const maintenanceArray = Array.isArray(existingMaintenance) ? existingMaintenance : [];
+  
+      // Combine existing records with new records
+      const updatedMaintenance = [...maintenanceArray, newRecord];
+  
+      // Update the Firestore document with the combined records
+      await updateDoc(carDocRef, {
+        maintenance: updatedMaintenance
+      });
+  
+      console.log("Maintenance records added successfully");
+      handleModalClose(); // Close modal after submission
+  
+      // Clear the state after submission
+      setMaintenanceRecords([]);
+    } catch (error) {
+      console.error("Error adding maintenance records: ", error);
+    }
+  };
+  
+  
+  
+  
   // ---------------------- UI ----------------------
   return (
     <ThemeProvider theme={theme}>
@@ -147,6 +210,8 @@ export default function Dashboard() {
           </Select>
         </FormControl>
 
+
+        
         {/* Upcoming maintenance box */}
         <Box width="800px" mb="40px">
           <Card
@@ -302,7 +367,8 @@ export default function Dashboard() {
                           variant="standard"
                           type="date"
                           placeholder="when was the last time you changed it?"
-                          name="mileage"
+                          value={lastChangedDate}
+                          onChange={handleLastChangedDateChange}
                         />
 
                         <Typography>
@@ -312,11 +378,12 @@ export default function Dashboard() {
                           variant="standard"
                           type="date"
                           placeholder="when is the next time you should change it by?"
-                          name="mileage"
+                          value={nextChangeDate}
+                          onChange={handleNextChangeDateChange}
                         />
 
                         <Button
-                          variant="standard"
+                          variant="contained"
                           type="submit"
                           sx={{
                             borderRadius: "20px",
@@ -326,12 +393,14 @@ export default function Dashboard() {
                             backgroundColor: "primary.secondary",
                             color: "primary.black",
                           }}
+                          onClick={handleSubmit}
                         >
                           Submit
                         </Button>
                       </Stack>
                     </Box>
                   </Modal>
+
                   <Button
                     variant="contained"
                     sx={{
@@ -344,6 +413,7 @@ export default function Dashboard() {
                       fontFamily: "Montserrat",
                     }}
                     onClick={handleModalOpen}
+                    disabled={!car}
                   >
                     Add
                   </Button>
@@ -359,6 +429,7 @@ export default function Dashboard() {
                 mt="20px"
               >
                 <Typography>Oil changed</Typography>
+                <TextField type="date" variant="standard" />
                 <TextField type="date" variant="standard" />
               </Box>
             </CardContent>
