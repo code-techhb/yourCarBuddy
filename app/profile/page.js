@@ -3,10 +3,8 @@ import * as React from "react";
 import { useState, useEffect } from "react";
 import { styled } from "@mui/material/styles";
 import {
-  FormControl,
   CssBaseline,
   Box,
-  Label,
   ThemeProvider,
   Typography,
   Button,
@@ -23,17 +21,10 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import Navbar from "../components/navbar";
 import Footer from "../components/footer";
 import { useRouter } from "next/navigation";
-import {
-  collection,
-  deleteDoc,
-  getDocs,
-  query,
-  setDoc,
-  doc,
-  getDoc,
-} from "firebase/firestore";
+import { collection, deleteDoc, getDocs, doc } from "firebase/firestore";
 import { db } from "@/firebase";
 import { useUser } from "@clerk/nextjs";
+import BottomNav from "../components/bottom_nav";
 
 const Profile = () => {
   const [rows, setRows] = useState([]);
@@ -256,7 +247,9 @@ const Profile = () => {
           </Button>
         </Box>
       </Box>
-      <Footer></Footer>
+      {/* Bottom Navigation */}
+      <BottomNav />
+      {/* <Footer></Footer> */}
     </ThemeProvider>
   );
 };

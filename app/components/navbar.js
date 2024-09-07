@@ -1,18 +1,5 @@
 "use client";
-import {
-  AppBar,
-  Toolbar,
-  Button,
-  Box,
-  ThemeProvider,
-  InputAdornment,
-  DialogTitle,
-  Dialog,
-  DialogActions,
-  DialogContent,
-  DialogContentText,
-  TextField,
-} from "@mui/material";
+import { AppBar, Toolbar, Button, Box, ThemeProvider } from "@mui/material";
 import Theme from "./theme";
 import { useRouter } from "next/navigation";
 import React, { useEffect } from "react";
@@ -71,11 +58,7 @@ const Navbar = () => {
 
   return (
     <ThemeProvider theme={Theme}>
-      <AppBar
-        position="static"
-        //sx={{ backgroundColor: 'black' }}
-        elevation={0}
-      >
+      <AppBar position="static" elevation={0}>
         <Toolbar>
           <Box
             display="flex"

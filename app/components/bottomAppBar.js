@@ -32,8 +32,8 @@ function BottomAppBar() {
       }}
     >
       <AppBar
-        position="static"
         sx={{
+          position: "relative",
           top: "auto",
           bottom: 0,
           bgcolor: "primary.main", // Customize as needed

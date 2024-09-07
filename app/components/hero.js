@@ -1,10 +1,15 @@
-'use client'
+"use client";
 import { Box, Typography, Button, ThemeProvider } from "@mui/material";
-//import StarIcon from "@mui/icons-material/Star";
+import { useRouter } from "next/navigation";
 import Theme from "./theme";
 
-
 const Hero = () => {
+  const router = useRouter();
+  // ---------------------- handle function -----------------
+  const RedirectToDashboard = async () => {
+    router.push("/dashboard");
+  };
+
   return (
     <ThemeProvider theme={Theme}>
       <Box
@@ -13,10 +18,9 @@ const Hero = () => {
         alignItems="center"
         justifyContent="center"
         gap={4}
-        
       >
         <Box
-        sx={{ maxWidth: '750px', textAlign:'center' }}
+          sx={{ maxWidth: "750px", textAlign: "center" }}
           display="flex"
           flexDirection={{ xs: "column", sm: "column" }}
           alignItems="center"
@@ -30,17 +34,17 @@ const Hero = () => {
               marginBottom: 2,
               fontFamily: "Anton",
               fontSize: {
-                xs: "36px", 
-                sm: "48px", 
-                md: "56px", 
-                lg: "68px", 
+                xs: "36px",
+                sm: "48px",
+                md: "56px",
+                lg: "68px",
               },
               fontWeight: "bold",
               color: Theme.palette.text.white,
               lineHeight: 1.3,
             }}
           >
-            Isn't It Time for a{" "}
+            Is not It Time for a{" "}
             <span style={{ color: "#00D779" }}>Better Way</span> to{" "}
             <span style={{ color: "#00D779" }}>Care for Your Car?</span>
           </Typography>
@@ -48,17 +52,19 @@ const Hero = () => {
         <Box>
           <Typography
             variant="h6"
-            sx={{maxWidth: '750px', textAlign:'center',
+            sx={{
+              maxWidth: "750px",
+              textAlign: "center",
               margin: 2,
               marginBottom: 5,
               fontFamily: "Montserrat",
               fontSize: {
-                xs: "16px", 
-                sm: "18px", 
-                md: "20px", 
-                lg: "24px", 
+                xs: "16px",
+                sm: "18px",
+                md: "20px",
+                lg: "24px",
               },
-              color: 'white',
+              color: "white",
               lineHeight: 1.3,
             }}
           >
@@ -66,31 +72,29 @@ const Hero = () => {
             reminders and expert advice. Say goodbye to confusion and
             overpaying—experience effortless car care with just a few taps.{" "}
           </Typography>
-          
         </Box>
         <Button
-                    type="submit"
-                    variant="contained"
-                    color="primary"
-                    sx={{
-                      background: Theme.palette.primary.secondary,
-                      borderRadius: 6,
-                      padding: {
-                        xs: '4px 20px', 
-                        sm: '4px 20px', 
-                        md: '8px 40px', 
-                        lg: '8px 40px', 
-                      },
-                      color: 'black',
-                      textTransform: 'none',
-                    }}
-                  >
-                    CHAT NOW
-                  </Button>
+          type="submit"
+          variant="contained"
+          color="primary"
+          sx={{
+            background: Theme.palette.primary.secondary,
+            borderRadius: 6,
+            padding: {
+              xs: "4px 20px",
+              sm: "4px 20px",
+              md: "8px 40px",
+              lg: "8px 40px",
+            },
+            color: "black",
+            textTransform: "none",
+          }}
+          onClick={RedirectToDashboard}
+        >
+          Get Started
+        </Button>
       </Box>
-    <Box>
-            
-    </Box>
+      <Box></Box>
     </ThemeProvider>
   );
 };
