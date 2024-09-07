@@ -47,10 +47,9 @@ const Profile = () => {
 
     if (!user) {
       console.error("User not authenticated");
-      router.push('/login'); // Redirect to login if not authenticated
+      router.push("/login"); // Redirect to login if not authenticated
       return;
     }
-
     const fetchCars = async () => {
       try {
         if (!db) {
@@ -76,32 +75,6 @@ const Profile = () => {
   }, [user, isLoaded, router]);
 
   // Handle Delete Function
-  // const handleDelete = async (VIN) => {
-  //   try {
-  //     // const db = getFirestore();
-  //     // const colRef = collection(doc(collection(db, 'users'), user.id), search);
-  //     const carsCollectionRef = collection(
-  //       doc(collection(db, "users"), user.id),
-  //       "cars"
-  //     ); // Reference to the 'users' collection
-  //     // Query to find the document with the matching VIN
-  //     const q = query(carsCollectionRef, where("VIN", "==", VIN));
-  //     const querySnapshot = await getDocs(q);
-
-  //     if (!querySnapshot.empty) {
-  //       // Assuming VIN is unique, there should be exactly one document
-  //       const docId = querySnapshot.docs[0].id; // Get the document ID
-  //       const carDocRef = doc(db, "users", docId); // Create a reference to the document
-  //       await deleteDoc(carDocRef); // Delete the document from Firestore
-  //       setRows((prevRows) => prevRows.filter((row) => row.VIN !== VIN)); // Update the UI to remove the deleted car
-  //     } else {
-  //       console.error("No car found with the provided VIN.");
-  //     }
-  //   } catch (error) {
-  //     console.error("Error deleting car: ", error);
-  //   }
-  // };
-
   const handleDelete = async (VIN) => {
     if (!user || !user.id) {
       console.error("User not authenticated");

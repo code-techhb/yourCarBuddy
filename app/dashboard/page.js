@@ -1,7 +1,7 @@
-'use client';
+"use client";
 import { useEffect, useState } from "react";
 import theme from "../components/theme";
-import * as React from 'react';
+import * as React from "react";
 import {
   Box,
   Button,
@@ -15,25 +15,33 @@ import {
   TextField,
   FormControl,
   MenuItem,
-  InputLabel
+  InputLabel,
+  Stack,
+  Modal,
 } from "@mui/material";
-import Select, { SelectChangeEvent } from '@mui/material/Select';
+import Select from "@mui/material/Select";
 import BuildIcon from "@mui/icons-material/Build";
 import Checkbox from "@mui/material/Checkbox";
 import BottomNav from "../components/bottom_nav";
 import Navbar from "../components/navbar";
-import { useUser } from "@clerk/nextjs"; // Import useUser
-import { db } from '@/firebase';
+import { useUser } from "@clerk/nextjs";
+import { db } from "@/firebase";
 import { collection, getDocs } from "firebase/firestore";
+import { carPartsCheckedFrequently } from "@/app/utils/elements";
 
 export default function Dashboard() {
-  const { user, isLoaded } = useUser(); 
-  //const userId = user?.id; 
-  const [car, setCar] = React.useState('');
+  // ---------------------- State vars ----------------------------
+
+  const { user, isLoaded } = useUser();
+  const [openAddModal, setOpenAddModal] = useState(false);
+  const [car, setCar] = React.useState("");
   const [open, setOpen] = React.useState(false);
   const [cars, setCars] = useState([]);
+  const [carPart, setCarPart] = useState("");
 
-   useEffect(() => {
+  // ---------------------- Use effect for fetching ---------------------
+
+  useEffect(() => {
     const fetchCars = async () => {
       if (!isLoaded || !user) {
         console.log("User is not loaded yet.");
@@ -46,7 +54,7 @@ export default function Dashboard() {
         const carsCollectionRef = collection(db, "users", userId, "cars");
         const carDocs = await getDocs(carsCollectionRef);
 
-        const carList = carDocs.docs.map(doc => ({
+        const carList = carDocs.docs.map((doc) => ({
           id: doc.id,
           ...doc.data(),
         }));
@@ -58,10 +66,11 @@ export default function Dashboard() {
       }
     };
 
-    fetchCars(); // Call the function on component mount
+    fetchCars();
   }, [user, isLoaded]);
 
-  
+  // ------------------------ Handle functions-------------------------
+
   const handleChange = (event) => {
     setCar(event.target.value);
   };
@@ -74,14 +83,24 @@ export default function Dashboard() {
     setOpen(true);
   };
 
+  const handleModalOpen = () => {
+    setOpenAddModal(true);
+  };
 
+  const handleModalClose = () => {
+    setOpenAddModal(false);
+  };
+
+  const handleCarPartChange = (event) => {
+    setCarPart(event.target.value);
+  };
+  // ---------------------- UI ----------------------
   return (
     <ThemeProvider theme={theme}>
       {/* Navbar will go here */}
       <Navbar />
       {/* outer box  */}
       <Box
-        
         height="100vh"
         sx={{
           background: theme.custom.background,
@@ -89,59 +108,50 @@ export default function Dashboard() {
           justifyContent: "center",
           alignItems: "center",
           flexDirection: "column",
-          width:"100vw",
-          maxWidth:'100%'
+          width: "100vw",
+          maxWidth: "100%",
         }}
       >
-
-      <FormControl sx={{ 
-              m: 1, 
-              minWidth: 800, 
-              backgroundColor: 'white',
-              marginBottom: 5,
-              boxShadow: "13px 15px 24px 0px rgba(255, 255, 255, 0.25), 6px 6px 4px 0px rgba(253, 255, 243, 0.25)"
-            }}>
-        <InputLabel    id="demo-simple-select-label">Select Your Car</InputLabel>
-        <Select
-          labelId="demo-simple-select-label"
-          id="demo-simple-select"
-          open={open}
-          onClose={handleClose}
-          onOpen={handleOpen}
-          value={car}
-          label="Car"
-          onChange={handleChange}
-        >
-          {cars.length === 0 && (
-            <MenuItem value="">
-              <em>None</em>
-            </MenuItem>
-          )}
-          {cars.map((car) => (
-            <MenuItem key={car.id} value={car.VIN}>
-              {`${car.brand} ${car.model} (${car.year})`} 
-            </MenuItem>
-          ))}
-        </Select>
-      </FormControl>  
-
-
-
-
-
-
-        {/* Upcoming maintenance box */}
-        <Box
-          width="800px"
-          mb="40px"
+        {/* dropdown */}
+        <FormControl
           sx={{
+            m: 1,
+            minWidth: 800,
+            backgroundColor: "primary.secondary",
+            marginBottom: 5,
             boxShadow:
               "13px 15px 24px 0px rgba(255, 255, 255, 0.25), 6px 6px 4px 0px rgba(253, 255, 243, 0.25)",
           }}
         >
+          <InputLabel id="demo-simple-select-label">Select Your Car</InputLabel>
+          <Select
+            labelId="demo-simple-select-label"
+            id="demo-simple-select"
+            open={open}
+            onClose={handleClose}
+            onOpen={handleOpen}
+            value={car}
+            label="Car"
+            onChange={handleChange}
+          >
+            {cars.length === 0 && (
+              <MenuItem value="">
+                <em>None</em>
+              </MenuItem>
+            )}
+            {cars.map((car) => (
+              <MenuItem key={car.id} value={car.VIN}>
+                {`${car.brand} ${car.model} (${car.year})`}
+              </MenuItem>
+            ))}
+          </Select>
+        </FormControl>
+
+        {/* Upcoming maintenance box */}
+        <Box width="800px" mb="40px">
           <Card
             sx={{
-              backgroundColor: "primary.secondary",
+              backgroundColor: "primary.white",
               color: "primary.black",
             }}
           >
@@ -224,7 +234,7 @@ export default function Dashboard() {
                 }}
               >
                 <Typography variant="h6">Recent Maintenance Log</Typography>
-                <Box>
+                <Box overflow="auto">
                   <Button
                     variant="outlined"
                     sx={{
@@ -239,6 +249,89 @@ export default function Dashboard() {
                   >
                     Edit
                   </Button>
+                  {/* // ---------------- add modal ---------------------- */}
+                  <Modal open={openAddModal} onClose={handleModalClose}>
+                    <Box
+                      sx={{
+                        bgcolor: "primary.white",
+                        position: "absolute",
+                        top: "50%",
+                        left: "50%",
+                        width: 800,
+                        padding: 4,
+                        display: "flex",
+                        flexDirection: "column",
+                        gap: 3,
+                        transform: "translate(-50%, -50%)",
+                      }}
+                    >
+                      <Typography
+                        variant="h4"
+                        sx={{
+                          textAlign: "center",
+                          fontSize: "40px",
+                          fontStyle: "normal",
+                          fontWeight: 700,
+                          color: "primary.secondary",
+                        }}
+                      >
+                        What do you want to track?
+                      </Typography>
+
+                      <Stack spacing={3}>
+                        <FormControl>
+                          <InputLabel id="car-part">Car Part</InputLabel>
+                          <Select
+                            labelId="car-part-select-label"
+                            value={carPart}
+                            variant="standard"
+                            onChange={handleCarPartChange}
+                          >
+                            {carPartsCheckedFrequently.map((part, index) => (
+                              <MenuItem key={index} value={part}>
+                                {part}
+                              </MenuItem>
+                            ))}
+                          </Select>
+                        </FormControl>
+
+                        <Typography>
+                          When was the last time you changed it?
+                        </Typography>
+                        <TextField
+                          variant="standard"
+                          type="date"
+                          placeholder="when was the last time you changed it?"
+                          name="mileage"
+                        />
+
+                        <Typography>
+                          When is the next time you should change it by?
+                        </Typography>
+                        <TextField
+                          variant="standard"
+                          type="date"
+                          placeholder="when is the next time you should change it by?"
+                          name="mileage"
+                        />
+
+                        <Button
+                          variant="standard"
+                          type="submit"
+                          sx={{
+                            borderRadius: "20px",
+                            alignSelf: "center",
+                            px: "15px",
+                            width: "120px",
+                            backgroundColor: "primary.secondary",
+                            color: "primary.black",
+                          }}
+                        >
+                          Submit
+                        </Button>
+                      </Stack>
+                    </Box>
+                  </Modal>
                   <Button
                     variant="contained"
                     sx={{
@@ -250,6 +343,7 @@ export default function Dashboard() {
                       color: "primary.black",
                       fontFamily: "Montserrat",
                     }}
+                    onClick={handleModalOpen}
                   >
                     Add
                   </Button>
