@@ -71,6 +71,20 @@ export default function Dashboard() {
     fetchCars();
   }, [user, isLoaded]);
 
+
+  const calculateDueInDays = (lastChangeDate, nextChangeDate) => {
+    const currentDate = new Date(lastChangeDate);
+    const nextDate = new Date(nextChangeDate);
+  
+    // Calculate difference in time
+    const timeDifference = nextDate - currentDate;
+    
+    // Convert time difference from milliseconds to days
+    const daysDifference = Math.floor(timeDifference / (1000 * 60 * 60 * 24));
+  
+    return daysDifference;
+  };
+
   // ------------------------ Handle functions-------------------------
 
   useEffect(() => {
@@ -255,27 +269,6 @@ export default function Dashboard() {
 
 
         
-        {/* Upcoming maintenance box */}
-        <Box width="800px" mb="40px">
-          <Card
-            sx={{
-              backgroundColor: "primary.white",
-              color: "primary.black",
-            }}
-          >
-            <CardContent>
-              <Typography variant="h6">Upcoming Maintenance</Typography>
-              {/* Will have a CRUD Operation here */}
-              <List sx={{ color: "primary.black" }}>
-                <ListItem>
-                  <BuildIcon sx={{ color: "#primary.black" }} />
-                  <ListItemText primary="Oil change in 5 days or 100 miles" />
-                </ListItem>
-              </List>
-            </CardContent>
-          </Card>
-        </Box>
-
         {/* Maintenance Remainder list  */}
         <Box width="800px" mb="40px">
           <Card
@@ -286,28 +279,36 @@ export default function Dashboard() {
           >
             <CardContent>
               <Typography variant="h6">Maintenance Reminder List</Typography>
-              {/* Will have a CRUD Operation here */}
-              <Box
-                display="flex"
-                justifyContent="space-between"
-                alignItems="center"
-                flexDirection="row"
-                border="1px solid black"
-                borderRadius="5px"
-                mt="10px"
-                p="20px"
-              >
-                <Checkbox id="maintenance-done" />
-                <Box>
-                  <Typography variant="h6">Oil change</Typography>
-                  <Typography>Every 3 months or 3000 to 7000 miles</Typography>
-                </Box>
-                <Box>
-                  <Typography variant="body1">Due in</Typography>
-                  <Typography variant="h6">5 Days</Typography>
-                </Box>
-              </Box>
-              {/* CRUD end here */}
+             {/* Will have a CRUD Operation here */}
+        {maintenanceRecords.map((record, index) => (
+          <Box
+            key={index}
+            display="flex"
+            justifyContent="space-between"
+            alignItems="center"
+            flexDirection="row"
+            border="1px solid black"
+            borderRadius="5px"
+            mt="10px"
+            p="20px"
+          >
+            <Checkbox id={`maintenance-${index}`} />
+            <Box>
+              <Typography variant="h6">{record.carPart}</Typography>
+              <Typography>{record.description}</Typography>
+            </Box>
+            <Box>
+              <Typography variant="body1">Due in</Typography>
+              <Typography variant="h6">
+                {calculateDueInDays(record.lastChanged, record.nextChange) > 0
+                  ? `${calculateDueInDays(record.lastChanged, record.nextChange)} Days`
+                  : "Past Due"}
+              </Typography>
+            </Box>
+          </Box>
+        ))}
+        {/* CRUD end here */}
+        {/* more button */}
               {/* more button */}
               <Box display="flex" justifyContent="center">
                 <Button
