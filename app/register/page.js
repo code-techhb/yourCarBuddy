@@ -8,7 +8,7 @@ import {
   Typography,
   Modal,
   TextField,
-  Stack
+  Stack,
 } from "@mui/material";
 import { styled } from "@mui/material/styles";
 import { useUser } from "@clerk/nextjs"; // Import useUser
@@ -19,8 +19,8 @@ import Navbar from "../components/navbar";
 export default function RegisterForm() {
   // ---------------- state management vars -----------------
   const [open, setOpen] = useState(false);
-  const { user } = useUser(); 
-  const userId = user?.id; 
+  const { user } = useUser();
+  const userId = user?.id;
   const router = useRouter();
 
   // Custom styled TextField
@@ -57,70 +57,69 @@ export default function RegisterForm() {
   const handleSubmit = async (event) => {
     event.preventDefault();
     const formData = new FormData(event.currentTarget);
-  
-    const vin = formData.get('VIN');
-  
-    let make = '';
-    let model = '';
-    let modelYear = '';
-    let brand = '';
-  
+
+    const vin = formData.get("VIN");
+
+    let make = "";
+    let model = "";
+    let modelYear = "";
+    let brand = "";
+
     // Fetch vehicle data
     try {
-      const response = await fetch(`https://vpic.nhtsa.dot.gov/api/vehicles/DecodeVin/${vin}?format=json`);
+      const response = await fetch(
+        `https://vpic.nhtsa.dot.gov/api/vehicles/DecodeVin/${vin}?format=json`
+      );
       const data = await response.json();
       const results = data.Results;
-  
+
       // Extract relevant vehicle details from the response
-      results.forEach(item => {
-        if (item.Variable === 'Make') {
+      results.forEach((item) => {
+        if (item.Variable === "Make") {
           make = item.Value;
         }
-        if (item.Variable === 'Model') {
+        if (item.Variable === "Model") {
           model = item.Value;
         }
-        if (item.Variable === 'Model Year') {
+        if (item.Variable === "Model Year") {
           modelYear = item.Value;
         }
-        if (item.Variable === 'Manufacturer Name') {
+        if (item.Variable === "Manufacturer Name") {
           brand = item.Value;
         }
       });
-  
+
       // Output the vehicle details
-      console.log(`Brand: ${brand}`);
-      console.log(`Make: ${make}`);
-      console.log(`Model: ${model}`);
-      console.log(`Model Year: ${modelYear}`);
-  
+      // console.log(`Brand: ${brand}`);
+      // console.log(`Make: ${make}`);
+      // console.log(`Model: ${model}`);
+      // console.log(`Model Year: ${modelYear}`);
+
       // Data to be sent to Firebase
       const carData = {
-        VIN: formData.get('VIN'),
+        VIN: formData.get("VIN"),
         brand: brand,
         model: model,
         year: modelYear,
-        mileage: formData.get('mileage'),
+        mileage: formData.get("mileage"),
       };
-  
-      console.log('Data to be passed to Firebase:', carData);
-  
+
+      console.log("Data to be passed to Firebase:", carData);
+
       if (userId) {
-        console.log('User ID is:', userId);
-        console.log('Calling addUserCar...');
+        console.log("User ID is:", userId);
+        console.log("Calling addUserCar...");
         await addUserCar(carData, userId);
-        console.log('addUserCar has been called');
+        console.log("addUserCar has been called");
         handleClose();
         router.push("/profile");
       } else {
         console.error("User not authenticated");
       }
-  
     } catch (error) {
-      console.error('Error fetching vehicle data:', error);
+      console.error("Error fetching vehicle data:", error);
     }
   };
-  
-
 
   return (
     <ThemeProvider theme={theme}>
@@ -149,7 +148,6 @@ export default function RegisterForm() {
         </Button>
         {/* modal */}
         <Modal open={open} onClose={handleClose}>
-         
           <Box
             sx={{
               background: theme.custom.thin_background,
@@ -164,7 +162,6 @@ export default function RegisterForm() {
               flexDirection: "column",
               gap: 3,
               transform: "translate(-50%, -50%)",
-
             }}
           >
             <Typography
@@ -179,48 +176,45 @@ export default function RegisterForm() {
             >
               Please enter your car information
             </Typography>
-            
+
             <form onSubmit={handleSubmit}>
-            <Stack spacing={6}>
-            <WhiteTextField
-              variant="standard"
-              placeholder="VIN"
-              name = 'VIN'
-              sx={{
-                textAlign: "center",
-                fontSize: "40px",
-                fontStyle: "normal",
-                fontWeight: 700,
-                color: "primary.white",
-              }}
-            />
-            <WhiteTextField
-              variant="standard"
-              type="number"
-              placeholder="Millage"
-              name = 'mileage'
-            />
+              <Stack spacing={6}>
+                <WhiteTextField
+                  variant="standard"
+                  placeholder="VIN"
+                  name="VIN"
+                  sx={{
+                    textAlign: "center",
+                    fontSize: "40px",
+                    fontStyle: "normal",
+                    fontWeight: 700,
+                    color: "primary.white",
+                  }}
+                />
+                <WhiteTextField
+                  variant="standard"
+                  type="number"
+                  placeholder="Millage"
+                  name="mileage"
+                />
 
-
-            <Button
-              variant="standard"
-              type="submit"
-              sx={{
-                borderRadius: "20px",
-                alignSelf: "center",
-                px: "15px",
-                width: "120px",
-                backgroundColor: "primary.secondary",
-                color: "primary.black",
-              }}
-            >
-              Submit
-            </Button>
-            </Stack>
-            </form> 
-            
+                <Button
+                  variant="standard"
+                  type="submit"
+                  sx={{
+                    borderRadius: "20px",
+                    alignSelf: "center",
+                    px: "15px",
+                    width: "120px",
+                    backgroundColor: "primary.secondary",
+                    color: "primary.black",
+                  }}
+                >
+                  Submit
+                </Button>
+              </Stack>
+            </form>
           </Box>
-          
         </Modal>
       </Box>
     </ThemeProvider>
