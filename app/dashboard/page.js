@@ -42,6 +42,7 @@ export default function Dashboard() {
   const [lastChangedDate, setLastChangedDate] = useState("");
   const [nextChangeDate, setNextChangeDate] = useState("");
   const [maintenanceRecords, setMaintenanceRecords] = useState([]);
+  
   // ---------------------- Use effect for fetching ---------------------
 
   useEffect(() => {
@@ -101,7 +102,7 @@ export default function Dashboard() {
     // Find the car document with the matching VIN
     const carDocRef = doc(carsCollectionRef, car);
     const carDoc = await getDoc(carDocRef);
-
+    console.log(carDoc)
     if (!carDoc.exists()) {
       console.error("Car not found");
       return;
@@ -258,7 +259,7 @@ export default function Dashboard() {
       });
   
       console.log("Maintenance records added successfully");
-      //handleModalClose(); // Close modal after submission
+      handleModalClose(); // Close modal after submission
   
       // Clear the state after submission
       setMaintenanceRecords([]);
@@ -266,8 +267,6 @@ export default function Dashboard() {
       setCarPart("");
     setLastChangedDate("");
     setNextChangeDate("");
-
-    handleModalClose();
 
     } catch (error) {
       console.error("Error adding maintenance records: ", error);
@@ -425,7 +424,7 @@ export default function Dashboard() {
                     Edit
                   </Button>
                   {/* // ---------------- add modal ---------------------- */}
-                  <Modal open={openAddModal} onClose={handleModalClose}>
+                  <Modal open={openAddModal} onClose={handleClose}>
                     <Box
                       sx={{
                         bgcolor: "primary.white",
