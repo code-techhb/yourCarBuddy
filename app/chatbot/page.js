@@ -15,7 +15,7 @@ import {
 import Theme from "../components/theme";
 import Navbar from "../components/navbar";
 import { MuiMarkdown } from "mui-markdown";
-import PhotoCamera from "@mui/icons-material/PhotoCamera"; // Icon for the upload button
+import PhotoCamera from "@mui/icons-material/PhotoCamera";
 import BottomNav from "../components/bottom_nav";
 
 export default function Home() {
@@ -172,12 +172,13 @@ export default function Home() {
       {/* background */}
       <Navbar></Navbar>
       <Box
-        // width="100wh"
-        height="100vh"
+        minHeight={"100vh"}
+        // height="100vh"
         sx={{ bgcolor: Theme.palette.primary.main }}
         display="flex"
         alignItems="center"
         justifyContent="center"
+        flexGrow={1}
         gap={2}
       >
         {/* Box Outside */}
@@ -352,7 +353,7 @@ export default function Home() {
           </Stack>
         </Box>
       </Box>
-      <BottomNav></BottomNav>
+      <BottomNav />
     </ThemeProvider>
   );
 }

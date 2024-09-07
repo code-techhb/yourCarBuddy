@@ -233,7 +233,7 @@ export default function Dashboard() {
                   marginTop: 2,
                 }}
               >
-                <Typography variant="h6">Recent Maintenance Log</Typography>
+                <Typography variant="h6">Log</Typography>
                 <Box overflow="auto">
                   <Button
                     variant="outlined"
@@ -364,10 +364,9 @@ export default function Dashboard() {
             </CardContent>
           </Card>
         </Box>
-
-        {/* Bottom Navigation */}
-        <BottomNav />
       </Box>
+      {/* Bottom Navigation */}
+      <BottomNav />
     </ThemeProvider>
   );
 }

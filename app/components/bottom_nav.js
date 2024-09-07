@@ -47,13 +47,10 @@ const BottomNav = () => {
       <Box
         sx={{
           width: "100%",
-          position: "fixed",
-          bottom: 0,
-          left: 0,
-          backgroundColor: "#fff",
         }}
       >
         <BottomNavigation
+          position="static"
           value={value}
           onChange={(event, newValue) => handleNavigation(newValue)}
           showLabels
