@@ -19,7 +19,7 @@ export default function SignInPage() {
 
   // ----------------- UI ------------------
   return (
-    <ThemeProvider theme={theme}>
+    <ThemeProvider theme={Theme}>
       <Box
         sx={{
           bgcolor: Theme,

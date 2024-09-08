@@ -25,7 +25,7 @@ export default function SignUpPage() {
 
   // ----------------- UI ------------------
   return (
-    <ThemeProvider theme={theme}>
+    <ThemeProvider theme={Theme}>
       <Box
         sx={{
           bgcolor: Theme,

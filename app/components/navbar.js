@@ -12,25 +12,27 @@ import {
   UserButton,
   useAuth,
 } from "@clerk/nextjs";
+import { useAuthRedirection } from "../utils/authRedirection";
 
 const Navbar = () => {
   // --------------------- event handler function ------------------
   const router = useRouter();
   const { isSignedIn } = useAuth();
+  useAuthRedirection();
 
   // Effect to redirect after sign-in
-  useEffect(() => {
-    const hasRedirected = sessionStorage.getItem("hasRedirected");
+  // useEffect(() => {
+  //   const hasRedirected = sessionStorage.getItem("hasRedirected");
 
-    if (isSignedIn && !hasRedirected) {
-      sessionStorage.setItem("hasRedirected", "true");
-      router.push("/register"); // Redirect to the register page after signing in
-    }
-  }, [isSignedIn, router]);
+  //   if (isSignedIn && !hasRedirected) {
+  //     sessionStorage.setItem("hasRedirected", "true");
+  //     router.push("/register"); // Redirect to the register page after signing in
+  //   }
+  // }, [isSignedIn, router]);
 
-  const handleRedirectLoginPage = () => {
-    router.push("/sign-in");
-  };
+  // const handleRedirectLoginPage = () => {
+  //   router.push("/sign-in");
+  // };
 
   const [open, setOpen] = React.useState(false);
 
