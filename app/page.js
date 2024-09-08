@@ -9,8 +9,32 @@ import MiddleHero from "./components/hero2";
 import FeaturesAI from "./components/features";
 import Footer from "./components/footer";
 import Profile from "./profile/page";
+import { useAuth } from "@clerk/nextjs";
+import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
+import { useAuthRedirection } from "./utils/authRedirection";
 
 export default function Home() {
+  useAuthRedirection();
+
+  // const { isSignedIn, isLoaded } = useAuth();
+  // const router = useRouter();
+  // const [hasRedirected, setHasRedirected] = useState(false);
+
+  // useEffect(() => {
+  //   if (typeof window !== "undefined") {
+  //     setHasRedirected(sessionStorage.getItem("hasRedirected") === "true");
+  //   }
+  // }, []);
+
+  // useEffect(() => {
+  //   if (isLoaded && isSignedIn && !hasRedirected) {
+  //     sessionStorage.setItem("hasRedirected", "true");
+  //     setHasRedirected(true);
+  //     router.push("/dashboard");
+  //   }
+  // }, [isSignedIn, isLoaded, hasRedirected, router]);
+
   return (
     <ThemeProvider theme={Theme}>
       <CssBaseline />
@@ -81,7 +105,6 @@ export default function Home() {
       </Box>
 
       <Footer></Footer>
-
     </ThemeProvider>
   );
 }

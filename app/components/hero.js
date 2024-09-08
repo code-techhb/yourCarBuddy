@@ -6,7 +6,7 @@ import { useEffect } from "react";
 import { useAuth } from "@clerk/nextjs";
 
 const Hero = () => {
-  const { isSignedIn } = useAuth();
+  const { isSignedIn, isLoaded } = useAuth();
   const router = useRouter();
   // ---------------------- handle function -----------------
   const RedirectToDashboard = async () => {
