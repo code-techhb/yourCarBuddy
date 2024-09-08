@@ -1,7 +1,7 @@
 "use client";
 
 // --------------------------------- Imports ------------------------------------
-import { useState, useRef } from "react";
+import { useState, useRef , useEffect} from "react";
 import {
   Box,
   Typography,
@@ -18,8 +18,17 @@ import { MuiMarkdown } from "mui-markdown";
 import PhotoCamera from "@mui/icons-material/PhotoCamera";
 import BottomNav from "../components/bottom_nav";
 import { useUser } from "@clerk/nextjs";
+import { useRouter } from "next/navigation";
 
 export default function Home() {
+  const router = useRouter();
+
+  useEffect(() => {
+    if (!user) {
+      router.push("/sign-in");
+    }
+  })
+  
   // --------------------------------- State Management vars -----------------------
   const [messages, setMessages] = useState([
     {

@@ -2,7 +2,7 @@
 import { useEffect, useState } from "react";
 import theme from "../components/theme";
 import * as React from "react";
-import DeleteIcon from "@mui/icons-material/Delete";
+import CheckBox from "@mui/icons-material/Checkbox";
 import {
   Box,
   Button,
@@ -34,7 +34,7 @@ import {
   getDoc,
 } from "firebase/firestore";
 import { carPartsCheckedFrequently } from "@/app/utils/elements";
-
+import { useRouter } from "next/navigation";
 export default function Dashboard() {
   // ---------------------- State vars ----------------------------
 
@@ -46,15 +46,21 @@ export default function Dashboard() {
   const [carPart, setCarPart] = useState("");
   const [lastChangedDate, setLastChangedDate] = useState("");
   const [nextChangeDate, setNextChangeDate] = useState("");
+  const [selectedCarData, setSelectedCarData] = useState(null); //added
   const [maintenanceRecords, setMaintenanceRecords] = useState([]);
+  const [checkedItems, setCheckedItems] = useState({}); //added
+  const router = useRouter();
 
-  // ---------------------- Use effect for fetching ---------------------
+
+  // ------------------------ Effects-------------------------
   useEffect(() => {
     const fetchCars = async () => {
       if (!isLoaded || !user) {
         console.log("User is not loaded yet.");
-        return;
+        router.push("/sign-in");
+        
       }
+      
       try {
         // Assuming you have a collection named 'cars' under 'users' (you may need to change this based on your Firestore structure)
         const userId = user.id;
@@ -75,69 +81,23 @@ export default function Dashboard() {
     fetchCars();
   }, [user, isLoaded]);
 
+  // ------------------------ Functions -------------------------
+  // Due dates calculator
   const calculateDueInDays = (lastChangeDate, nextChangeDate) => {
     const currentDate = new Date();
     const nextDate = new Date(nextChangeDate);
-    // console.log("current day", currentDate);
-    // console.log("another", nextDate);
-    // Calculate difference in time
     const timeDifference = nextDate - currentDate;
     // Convert time difference from milliseconds to days
     const daysDifference = Math.floor(timeDifference / (1000 * 60 * 60 * 24));
     return daysDifference + 2;
   };
 
-  // const handleDelete = async (index) => {
-  //   if (!user || !user.id) {
-  //     console.error("User not authenticated");
-  //     return;
-  //   }
-
-  //   try {
-  //     const userId = user.id;
-  //     const carsCollectionRef = collection(db, "users", user.id, "cars");
-
-  //     // Find the car document with the matching VIN
-  //     const carDocRef = doc(carsCollectionRef, car);
-  //     const carDoc = await getDoc(carDocRef);
-
-  //     if (!carDoc.exists()) {
-  //       console.error("Car not found");
-  //       return;
-  //     }
-
-  //     const carData = carDoc.data();
-  //     const maintenanceRecords = carData.maintenance || [];
-
-  //     if (index < 0 || index >= maintenanceRecords.length) {
-  //       console.error("Invalid index");
-  //       return;
-  //     }
-
-  //     // Remove the item at the specified index
-  //     const updatedMaintenanceRecords = maintenanceRecords.filter(
-  //       (_, i) => i !== index
-  //     );
-
-  //     // Update the document with the modified array
-  //     await updateDoc(carDocRef, {
-  //       maintenance: updatedMaintenanceRecords,
-  //     });
-
-  //     alert("Maintenance record deleted successfully");
-
-  //     // Update the local state
-  //     setMaintenanceRecords(updatedMaintenanceRecords);
-  //   } catch (error) {
-  //     console.error("Error deleting maintenance record: ", error);
-  //   }
-  // };
+  // Complete task checker
   const handleDelete = async (index) => {
     if (!user || !user.id) {
       console.error("User not authenticated");
       return;
     }
-
     try {
       const userId = user.id;
       const carsCollectionRef = collection(db, "users", user.id, "cars");
@@ -165,30 +125,27 @@ export default function Dashboard() {
       await updateDoc(carDocRef, {
         maintenance: updatedMaintenanceRecords,
       });
-
-      alert("Maintenance record deleted successfully");
+      // alert("Maintenance successfully check");
       // Update the local state
       setMaintenanceRecords(updatedMaintenanceRecords);
     } catch (error) {
       console.error("Error deleting maintenance record: ", error);
     }
   };
-  // ------------------------ Handle functions-------------------------
-  useEffect(() => {
-    const fetchMaintenance = async () => {
-      if (!car || !isLoaded || !user) {
-        return;
-      }
 
-      try {
-        const userId = user.id;
-        const carsCollectionRef = collection(db, "users", userId, "cars");
-        const carDocs = await getDocs(carsCollectionRef);
+  // Maintenace function
+  const fetchMaintenanceForCar = async (carVIN) => {
+    if (!user || !carVIN) return;
 
-        const carList = carDocs.docs.map((doc) => ({
-          id: doc.id,
-          ...doc.data(),
-        }));
+    try {
+      const userId = user.id;
+      const carsCollectionRef = collection(db, "users", userId, "cars");
+      const carDocs = await getDocs(carsCollectionRef);
+
+      const carList = carDocs.docs.map((doc) => ({
+        id: doc.id,
+        ...doc.data(),
+      }));
 
       const selectedCar = carList.find((carItem) => carItem.VIN === carVIN);
       console.log("Car List:", carList);
@@ -210,9 +167,7 @@ export default function Dashboard() {
     }
   };
 
-    fetchMaintenance();
-  }, [car, isLoaded, user]);
-
+  // handle car change in the select dropdown
   const handleChange = (event) => {
     const selectedVIN = event.target.value;
     setCar(selectedVIN);
@@ -298,7 +253,6 @@ export default function Dashboard() {
     }));
     handleDelete(index);
   };
-
   // ---------------------- UI ----------------------
   return (
     <ThemeProvider theme={theme}>
@@ -381,7 +335,9 @@ export default function Dashboard() {
 
               {maintenanceRecords.map((record, index) => (
                 <Box
-                  key={index}
+                key={
+                  record.id || `${record.carPart}-${record.lastChanged}`
+                }
                   display="flex"
                   justifyContent="space-between"
                   alignItems="center"
@@ -391,10 +347,10 @@ export default function Dashboard() {
                   mt="10px"
                   p="20px"
                 >
-                  <DeleteIcon
-                    sx={{ cursor: "pointer", color: "GREY" }}
-                    onClick={() => handleDelete(index)}
-                  />
+                  <Checkbox
+                        sx={{ cursor: "pointer", color: "GREY" }}
+                        onChange={() => handleCheckboxChange(index)}
+                    />
                   <Box>
                     <Typography variant="h6">{record.carPart}</Typography>
                     <Typography>{record.description}</Typography>

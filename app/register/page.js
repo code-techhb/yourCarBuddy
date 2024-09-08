@@ -1,5 +1,5 @@
 "use client";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import theme from "../components/theme";
 import {
   Box,
@@ -22,6 +22,14 @@ export default function RegisterForm() {
   const { user } = useUser();
   const userId = user?.id;
   const router = useRouter();
+
+
+
+  useEffect(() => {
+      if (!user) {
+        router.push("/sign-in");
+      }
+    })
 
   // Custom styled TextField
   const WhiteTextField = styled(TextField)({
