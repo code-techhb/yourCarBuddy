@@ -26,7 +26,7 @@ export default function SignInPage() {
           height: "100vh",
           display: "flex",
           flexDirection: "column",
-          backgroundColor: "primary.main",
+          backgroundColor: Theme.palette.primary.main,
         }}
       >
         {/* Nav bar */}
@@ -46,7 +46,7 @@ export default function SignInPage() {
               p: 4,
               maxWidth: "sm",
               width: "100%",
-              backgroundColor: "primary.main",
+              backgroundColor: Theme.palette.primary.main,
               display: "flex",
               justifyContent: "center",
               alignItems: "center",
@@ -73,7 +73,7 @@ export default function SignInPage() {
             <SignIn
               appearance={{
                 baseTheme: clerkTheme,
-                variables: { colorPrimary: "primary.secondary" },
+                variables: { colorPrimary: Theme.palette.text.green },
               }}
             />
           </Paper>

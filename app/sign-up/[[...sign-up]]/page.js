@@ -32,7 +32,7 @@ export default function SignUpPage() {
           height: "100vh",
           display: "flex",
           flexDirection: "column",
-          backgroundColor: "primary.main",
+          backgroundColor: Theme.palette.primary.main,
         }}
       >
         {/* Nav bar */}
