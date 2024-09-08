@@ -17,9 +17,9 @@ const BottomNav = () => {
   const pathname = usePathname();
 
   const getActiveValue = () => {
-    if (pathname === "/profile") return 0;
+    if (pathname === "/dashboard") return 0;
     if (pathname === "/chatbot") return 1;
-    if (pathname === "/dashboard") return 2;
+    if (pathname === "/profile") return 2;
     return 0; // default to profile if not matching
   };
 
@@ -29,13 +29,13 @@ const BottomNav = () => {
     setValue(newValue);
     switch (newValue) {
       case 0:
-        router.push("/profile");
+        router.push("/dashboard");
         break;
       case 1:
         router.push("/chatbot");
         break;
       case 2:
-        router.push("/dashboard");
+        router.push("/profile");
         break;
     }
   };
@@ -56,18 +56,19 @@ const BottomNav = () => {
         }}
       >
         <BottomNavigationAction
-          label="Profile"
-          icon={<PersonIcon />}
+          label="Dashboard"
+          icon={<NoteIcon />}
           sx={{ color: "primary.black" }}
         />
+
         <BottomNavigationAction
           label="Chat"
           icon={<ChatIcon />}
           sx={{ color: "primary.black" }}
         />
         <BottomNavigationAction
-          label="Dashboard"
-          icon={<NoteIcon />}
+          label="Profile"
+          icon={<PersonIcon />}
           sx={{ color: "primary.black" }}
         />
       </BottomNavigation>

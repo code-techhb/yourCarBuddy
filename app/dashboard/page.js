@@ -46,7 +46,9 @@ export default function Dashboard() {
   const [carPart, setCarPart] = useState("");
   const [lastChangedDate, setLastChangedDate] = useState("");
   const [nextChangeDate, setNextChangeDate] = useState("");
+  const [selectedCarData, setSelectedCarData] = useState(null); //added
   const [maintenanceRecords, setMaintenanceRecords] = useState([]);
+  const [checkedItems, setCheckedItems] = useState({}); //added
 
   // ------------------------ Effects-------------------------
   useEffect(() => {
@@ -77,7 +79,8 @@ export default function Dashboard() {
     fetchCars();
   }, [user, isLoaded]);
 
-  // Due dates
+  // ------------------------ Functions -------------------------
+  // Due dates calculator
   const calculateDueInDays = (lastChangeDate, nextChangeDate) => {
     const currentDate = new Date();
     const nextDate = new Date(nextChangeDate);
@@ -87,12 +90,12 @@ export default function Dashboard() {
     return daysDifference + 2;
   };
 
+  // Complete task checker
   const handleDelete = async (index) => {
     if (!user || !user.id) {
       console.error("User not authenticated");
       return;
     }
-
     try {
       const userId = user.id;
       const carsCollectionRef = collection(db, "users", user.id, "cars");
@@ -128,48 +131,84 @@ export default function Dashboard() {
     }
   };
 
-  // fetch maintenance data from db
-  useEffect(() => {
-    const fetchMaintenance = async () => {
-      if (!car || !isLoaded || !user) {
-        return;
+  // Maintenace function
+  const fetchMaintenanceForCar = async (carVIN) => {
+    if (!user || !carVIN) return;
+
+    try {
+      const userId = user.id;
+      const carsCollectionRef = collection(db, "users", userId, "cars");
+      const carDocs = await getDocs(carsCollectionRef);
+
+      const carList = carDocs.docs.map((doc) => ({
+        id: doc.id,
+        ...doc.data(),
+      }));
+
+      const selectedCar = carList.find((carItem) => carItem.VIN === carVIN);
+
+      if (selectedCar && selectedCar.maintenance) {
+        setMaintenanceRecords(selectedCar.maintenance);
+        setSelectedCarData(selectedCar);
+      } else {
+        setMaintenanceRecords([]);
+        setSelectedCarData(null);
+        alert(
+          "No maintenance records found!\nGo to your Profile and check your car data!"
+        );
       }
-
-      try {
-        const userId = user.id;
-        const carsCollectionRef = collection(db, "users", userId, "cars");
-        const carDocs = await getDocs(carsCollectionRef);
-
-        const carList = carDocs.docs.map((doc) => ({
-          id: doc.id,
-          ...doc.data(),
-        }));
-
-        setCars(carList);
-
-        const selectedCar = carList.find((carItem) => carItem.VIN === car);
-
-        if (selectedCar && selectedCar.maintenance.length > 0) {
-          // Update state with maintenance records
-          setMaintenanceRecords(selectedCar.maintenance);
-          // console.log("here", maintenanceRecord)
-        } else {
-          alert("Car not found or no maintenance records available.");
-          setMaintenanceRecords([]);
-        }
-      } catch (error) {
-        console.error("Error fetching maintenance: ", error);
-      }
-    };
-
-    fetchMaintenance();
-  }, [car, isLoaded, user]);
-
-  // ------------------------ Handle functions-------------------------
-  const handleChange = (event) => {
-    setCar(event.target.value);
+    } catch (error) {
+      console.error("Error fetching maintenance: ", error);
+    }
   };
 
+  // handle car change in the select dropdown
+  const handleChange = (event) => {
+    const selectedVIN = event.target.value;
+    setCar(selectedVIN);
+    //call fetch maintenance to get the new data for the car
+    fetchMaintenanceForCar(selectedVIN);
+  };
+
+  // Submit modal handler function
+  const handleSubmit = async () => {
+    if (!user || !car || !carPart || !lastChangedDate || !nextChangeDate) {
+      alert("All fields are required!");
+      return;
+    }
+    const newRecord = {
+      carPart,
+      lastChanged: lastChangedDate,
+      nextChange: nextChangeDate,
+    };
+    try {
+      const userId = user.id;
+      const carsCollectionRef = collection(db, "users", userId, "cars");
+
+      if (!selectedCarData || !selectedCarData.id) {
+        alert("Selected car not found or invalid");
+        return;
+      }
+      const carDocRef = doc(carsCollectionRef, selectedCarData.id);
+      // Update local state immediately
+      const updatedMaintenance = [...maintenanceRecords, newRecord];
+      setMaintenanceRecords(updatedMaintenance);
+      // Update Firestore
+      await updateDoc(carDocRef, {
+        maintenance: updatedMaintenance,
+      });
+
+      handleModalClose();
+      // Clear form fields
+      setCarPart("");
+      setLastChangedDate("");
+      setNextChangeDate("");
+    } catch (error) {
+      console.error("Error adding maintenance records: ", error);
+    }
+  };
+
+  // ------------------------ other Handler functions-------------------------
   const handleClose = () => {
     setOpen(false);
   };
@@ -201,53 +240,12 @@ export default function Dashboard() {
     setLastChangedDate("");
     setNextChangeDate("");
   };
-
-  const handleSubmit = async () => {
-    if (!user || !car || !carPart || !lastChangedDate || !nextChangeDate) {
-      console.error("All fields are required");
-      return;
-    }
-    const newRecord = {
-      carPart,
-      lastChanged: lastChangedDate,
-      nextChange: nextChangeDate,
-    };
-    try {
-      const userId = user.id;
-      const carsCollectionRef = collection(db, "users", userId, "cars");
-      const selectedCar = cars.find((c) => c.VIN === car);
-
-      if (!selectedCar || !selectedCar.id) {
-        alert("Selected car not found or invalid");
-        return;
-      }
-      const carDocRef = doc(carsCollectionRef, selectedCar.id);
-      // Fetch the existing maintenance records
-      const carDoc = await getDoc(carDocRef);
-      const existingMaintenance = carDoc.exists()
-        ? carDoc.data().maintenance
-        : [];
-      // Ensure existingMaintenance is an array
-      const maintenanceArray = Array.isArray(existingMaintenance)
-        ? existingMaintenance
-        : [];
-      // Combine existing records with new records
-      const updatedMaintenance = [...maintenanceArray, newRecord];
-      // Update the Firestore document with the combined records
-      await updateDoc(carDocRef, {
-        maintenance: updatedMaintenance,
-      });
-      handleModalClose(); // Close modal after submission
-      // Clear the state after submission
-      setMaintenanceRecords([]);
-      setCarPart("");
-      setLastChangedDate("");
-      setNextChangeDate("");
-
-      handleModalClose();
-    } catch (error) {
-      console.error("Error adding maintenance records: ", error);
-    }
+  const handleCheckboxChange = (index) => {
+    setCheckedItems((prevCheckedItems) => ({
+      ...prevCheckedItems,
+      [index]: !prevCheckedItems[index],
+    }));
+    handleDelete(index); // Or update this logic as needed
   };
 
   // ---------------------- UI ----------------------
@@ -272,6 +270,7 @@ export default function Dashboard() {
               alignItems: "center",
               flexDirection: "column",
               padding: "20px",
+              width: "100%",
             }}
           >
             {/* dropdown */}
@@ -292,7 +291,7 @@ export default function Dashboard() {
                   padding: "5px",
                 }}
               >
-                Select your car
+                Select a car
               </InputLabel>
               <Select
                 labelId="demo-simple-select-label"
@@ -339,7 +338,9 @@ export default function Dashboard() {
 
                   {maintenanceRecords.map((record, index) => (
                     <Box
-                      key={index}
+                      key={
+                        record.id || `${record.carPart}-${record.lastChanged}`
+                      }
                       display="flex"
                       justifyContent="space-between"
                       alignItems="center"
@@ -351,7 +352,7 @@ export default function Dashboard() {
                     >
                       <Checkbox
                         sx={{ cursor: "pointer", color: "GREY" }}
-                        onClick={() => handleDelete(index)}
+                        onChange={() => handleCheckboxChange(index)}
                       />
                       <Box>
                         <Typography>{record.carPart}</Typography>

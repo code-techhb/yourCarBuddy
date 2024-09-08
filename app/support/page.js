@@ -21,7 +21,7 @@ export default function ContactUs() {
       <Navbar></Navbar>
       <CssBaseline></CssBaseline>
       <Box
-        width="100vw"
+        width="100%"
         minHeight="100vh"
         display="flex"
         flexDirection="column"
@@ -33,7 +33,7 @@ export default function ContactUs() {
 
         {/* Main Content */}
         <Box
-          width="100vw"
+          width="100%"
           minHeight="100vh"
           display="flex"
           flexDirection="column"
@@ -61,7 +61,8 @@ export default function ContactUs() {
                   xs: "22px",
                   sm: "28px",
                   md: "40px",
-                  lg: "48px",},
+                  lg: "48px",
+                },
                 fontStyle: "normal",
                 fontWeight: 700,
                 color: Theme.palette.text.white,
