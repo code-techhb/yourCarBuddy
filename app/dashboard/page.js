@@ -55,7 +55,6 @@ export default function Dashboard() {
         console.log("User is not loaded yet.");
         return;
       }
-
       try {
         // Assuming you have a collection named 'cars' under 'users' (you may need to change this based on your Firestore structure)
         const userId = user.id;
@@ -66,7 +65,6 @@ export default function Dashboard() {
           id: doc.id,
           ...doc.data(),
         }));
-
         setCars(carList); // Update state with the fetched cars
         // console.log("Car Fetch", carList);
       } catch (error) {
@@ -192,34 +190,74 @@ export default function Dashboard() {
           ...doc.data(),
         }));
 
-        setCars(carList);
+      const selectedCar = carList.find((carItem) => carItem.VIN === carVIN);
+      console.log("Car List:", carList);
+      console.log("Selected Car:", selectedCar);
 
-        const selectedCar = carList.find((carItem) => carItem.VIN === car);
-
-        if (selectedCar && selectedCar.maintenance.length > 0) {
-          // const maintenanceRecord = selectedCar.maintenance;
-          // console.log("Car Part:", maintenanceRecord.carPart);
-          // console.log("Last Changed:", maintenanceRecord.lastChanged);
-          // console.log("Next Change:", maintenanceRecord.nextChange);
-          // Update state with maintenance records
-          setMaintenanceRecords(selectedCar.maintenance);
-          // console.log("here", maintenanceRecord)
-        } else {
-          alert("Car not found or no maintenance records available.");
-          setMaintenanceRecords([]);
-        }
-      } catch (error) {
-        console.error("Error fetching maintenance: ", error);
+      //
+      if (selectedCar) {
+        setSelectedCarData(selectedCar);
+        setMaintenanceRecords(selectedCar.maintenance || []);
+      } else {
+        setMaintenanceRecords([]);
+        setSelectedCarData(null);
+        alert(
+          "No maintenance records found!\nGo to your Profile and check your car data!"
+        );
       }
-    };
+    } catch (error) {
+      console.error("Error fetching maintenance: ", error);
+    }
+  };
 
     fetchMaintenance();
   }, [car, isLoaded, user]);
 
   const handleChange = (event) => {
-    setCar(event.target.value);
+    const selectedVIN = event.target.value;
+    setCar(selectedVIN);
+    //call fetch maintenance to get the new data for the car
+    fetchMaintenanceForCar(selectedVIN);
   };
 
+  // Submit modal handler function
+  const handleSubmit = async () => {
+    if (!user || !car || !carPart || !lastChangedDate || !nextChangeDate) {
+      alert("All fields are required!");
+      return;
+    }
+    const newRecord = {
+      carPart,
+      lastChanged: lastChangedDate,
+      nextChange: nextChangeDate,
+    };
+    try {
+      const userId = user.id;
+      const carsCollectionRef = collection(db, "users", userId, "cars");
+
+      if (!selectedCarData || !selectedCarData.id) {
+        alert("Selected car not found.");
+        return;
+      }
+      const carDocRef = doc(carsCollectionRef, selectedCarData.id);
+      // Update local state immediately
+      const updatedMaintenance = [...maintenanceRecords, newRecord];
+      setMaintenanceRecords(updatedMaintenance);
+      // Update Firestore
+      await updateDoc(carDocRef, {
+        maintenance: updatedMaintenance,
+      });
+      handleModalClose();
+      // Clear form fields
+      setCarPart("");
+      setLastChangedDate("");
+      setNextChangeDate("");
+    } catch (error) {
+      console.error("Error adding maintenance records: ", error);
+    }
+  };
+
+  // ------------------------ other Handler functions-------------------------
   const handleClose = () => {
     setOpen(false);
   };
@@ -252,63 +290,13 @@ export default function Dashboard() {
     setNextChangeDate("");
   };
 
-  const handleSubmit = async () => {
-    if (!user || !car || !carPart || !lastChangedDate || !nextChangeDate) {
-      console.error("All fields are required");
-      return;
-    }
-
-    const newRecord = {
-      carPart,
-      lastChanged: lastChangedDate,
-      nextChange: nextChangeDate,
-    };
-
-    try {
-      const userId = user.id;
-      const carsCollectionRef = collection(db, "users", userId, "cars");
-      const selectedCar = cars.find((c) => c.VIN === car);
-
-      if (!selectedCar || !selectedCar.id) {
-        console.error("Selected car not found or invalid");
-        return;
-      }
-
-      const carDocRef = doc(carsCollectionRef, selectedCar.id);
-
-      // Fetch the existing maintenance records
-      const carDoc = await getDoc(carDocRef);
-      const existingMaintenance = carDoc.exists()
-        ? carDoc.data().maintenance
-        : [];
-
-      // Ensure existingMaintenance is an array
-      const maintenanceArray = Array.isArray(existingMaintenance)
-        ? existingMaintenance
-        : [];
-
-      // Combine existing records with new records
-      const updatedMaintenance = [...maintenanceArray, newRecord];
-
-      // Update the Firestore document with the combined records
-      await updateDoc(carDocRef, {
-        maintenance: updatedMaintenance,
-      });
-
-      console.log("Maintenance records added successfully");
-
-      handleModalClose(); // Close modal after submission
-
-      // Clear the state after submission
-      setMaintenanceRecords([]);
-      setCarPart("");
-      setLastChangedDate("");
-      setNextChangeDate("");
-
-      handleModalClose();
-    } catch (error) {
-      console.error("Error adding maintenance records: ", error);
-    }
+  // checkmark
+  const handleCheckboxChange = (index) => {
+    setCheckedItems((prevCheckedItems) => ({
+      ...prevCheckedItems,
+      [index]: !prevCheckedItems[index],
+    }));
+    handleDelete(index);
   };
 
   // ---------------------- UI ----------------------

@@ -14,14 +14,13 @@ import { useAuth } from "@clerk/nextjs";
 
 const MiddleHero = () => {
   // ---------------------- handle function -----------------
-
   const { isSignedIn } = useAuth();
   const router = useRouter();
 
   const RedirectToChatbot = async () => {
     if (!isSignedIn) {
       // Redirect to sign-in page if not signed in
-      router.push("/sign-in");
+      router.push("/sign-up");
     } else {
       // Redirect to the dashboard if signed in
       router.push("/chatbot");

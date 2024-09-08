@@ -2,29 +2,21 @@
 import { Box, Typography, Button, ThemeProvider } from "@mui/material";
 import { useRouter } from "next/navigation";
 import Theme from "./theme";
-import { useEffect } from "react";
 import { useAuth } from "@clerk/nextjs";
 
 const Hero = () => {
   const { isSignedIn, isLoaded } = useAuth();
   const router = useRouter();
   // ---------------------- handle function -----------------
-  const RedirectToDashboard = async () => {
+  const RedirectToRegister = async () => {
     if (!isSignedIn) {
       // Redirect to sign-in page if not signed in
-      router.push("/sign-in");
+      router.push("/sign-up");
     } else {
       // Redirect to the dashboard if signed in
-      router.push("/dashboard");
+      router.push("/register");
     }
   };
-
-  // useEffect(() => {
-  //   if (!isSignedIn) {
-  //     // Redirect to sign-in page if not signed in
-  //     router.push("/sign-in");
-  //   }
-  // }, [isSignedIn, router]);
 
   return (
     <ThemeProvider theme={Theme}>
@@ -111,7 +103,7 @@ const Hero = () => {
             color: "black",
             textTransform: "none",
           }}
-          onClick={RedirectToDashboard}
+          onClick={RedirectToRegister}
         >
           Get Started
         </Button>

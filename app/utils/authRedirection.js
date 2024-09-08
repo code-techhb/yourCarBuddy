@@ -1,5 +1,4 @@
 // In utils/authRedirection.js
-
 import { useEffect } from "react";
 import { useAuth, useUser } from "@clerk/nextjs";
 import { useRouter } from "next/navigation";
@@ -21,7 +20,7 @@ export function useAuthRedirection() {
         if (isFirstSignIn) {
           router.push("/register");
         } else {
-          router.push("/dashboard");
+          router.push("/profile");
         }
       }
     }
