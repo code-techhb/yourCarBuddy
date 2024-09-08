@@ -2,13 +2,29 @@
 import { Box, Typography, Button, ThemeProvider } from "@mui/material";
 import { useRouter } from "next/navigation";
 import Theme from "./theme";
+import { useEffect } from "react";
+import { useAuth } from "@clerk/nextjs";
 
 const Hero = () => {
+  const { isSignedIn } = useAuth();
   const router = useRouter();
   // ---------------------- handle function -----------------
   const RedirectToDashboard = async () => {
-    router.push("/dashboard");
+    if (!isSignedIn) {
+      // Redirect to sign-in page if not signed in
+      router.push("/sign-in");
+    } else {
+      // Redirect to the dashboard if signed in
+      router.push("/dashboard");
+    }
   };
+
+  // useEffect(() => {
+  //   if (!isSignedIn) {
+  //     // Redirect to sign-in page if not signed in
+  //     router.push("/sign-in");
+  //   }
+  // }, [isSignedIn, router]);
 
   return (
     <ThemeProvider theme={Theme}>
@@ -44,7 +60,7 @@ const Hero = () => {
               lineHeight: 1.3,
             }}
           >
-            Is not It Time for a{" "}
+            Is It not Time for a{" "}
             <span style={{ color: "#00D779" }}>Better Way</span> to{" "}
             <span style={{ color: "#00D779" }}>Care for Your Car?</span>
           </Typography>

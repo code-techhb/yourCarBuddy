@@ -55,14 +55,13 @@ export default function ContactUs() {
               margin={4}
               align="center"
               sx={{
-                fontFamily: "Paytone One",
+                fontFamily: "Montserrat",
                 fontSize: "32px",
                 fontSize: {
                   xs: "22px",
                   sm: "28px",
                   md: "40px",
-                  lg: "50px",
-                },
+                  lg: "48px",},
                 fontStyle: "normal",
                 fontWeight: 700,
                 color: Theme.palette.text.white,
