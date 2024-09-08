@@ -1,5 +1,5 @@
 "use client";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import theme from "../components/theme";
 import {
   Box,
@@ -11,17 +11,25 @@ import {
   Stack,
 } from "@mui/material";
 import { styled } from "@mui/material/styles";
-import { useUser } from "@clerk/nextjs"; // Import useUser
+import { useUser } from "@clerk/nextjs";
 import { addUserCar } from "../utils/page";
 import { useRouter } from "next/navigation";
-import Navbar from "../components/navbar";
 // ---------------- component -----------------
 export default function RegisterForm() {
   // ---------------- state management vars -----------------
-  const [open, setOpen] = useState(false);
+  const [open, setOpen] = useState(true);
+  const [formFilled, setFormFilled] = useState(false);
   const { user } = useUser();
   const userId = user?.id;
   const router = useRouter();
+
+
+
+  useEffect(() => {
+      if (!user) {
+        router.push("/sign-in");
+      }
+    })
 
   // Custom styled TextField
   const WhiteTextField = styled(TextField)({
@@ -49,9 +57,22 @@ export default function RegisterForm() {
   });
 
   // ----------------event handler functions -----------------
-  const handleOpen = () => setOpen(true);
-  const handleClose = () => setOpen(false);
-  // ----------------------UI-----------------------------
+  const handleInputChange = () => {
+    // Check if form fields have values to determine if the form is filled
+    const vin = document.querySelector('input[name="VIN"]').value.trim();
+    const mileage = document
+      .querySelector('input[name="mileage"]')
+      .value.trim();
+    setFormFilled(vin.length > 0 || mileage.length > 0);
+  };
+
+  const handleClose = () => {
+    if (formFilled) {
+      setOpen(false);
+    } else {
+      alert("Please enter your Car information before you can proceed!");
+    }
+  };
 
   // -----------------On submit -----------------
   const handleSubmit = async (event) => {
@@ -89,12 +110,6 @@ export default function RegisterForm() {
         }
       });
 
-      // Output the vehicle details
-      // console.log(`Brand: ${brand}`);
-      // console.log(`Make: ${make}`);
-      // console.log(`Model: ${model}`);
-      // console.log(`Model Year: ${modelYear}`);
-
       // Data to be sent to Firebase
       const carData = {
         VIN: formData.get("VIN"),
@@ -123,100 +138,85 @@ export default function RegisterForm() {
 
   return (
     <ThemeProvider theme={theme}>
-      {/* Navbar go here */}
-      <Navbar></Navbar>
-      {/* Outer box */}
-      <Box
-        width="100vw"
-        height="100vh"
+      <Modal
+        open={open}
+        onClose={handleClose}
         sx={{
-          background: theme.custom.background,
-          display: "flex",
-          justifyContent: "center",
-          alignItems: "center",
-          flexDirection: "column",
+          "& .MuiBackdrop-root": {
+            backgroundColor: "rgba(0, 36, 33, 1)",
+          },
         }}
       >
-        <Typography color="primary.white">Welcome</Typography>
-        {/* button for testing purposes */}
-        <Button
-          variant="contained"
-          background="primary.secondary"
-          onClick={handleOpen}
+        <Box
+          sx={{
+            background: theme.custom.thin_background,
+            position: "absolute",
+            top: "50%",
+            left: "50%",
+            width: 800,
+            border: "3 solid black",
+            boxShadow: 24,
+            padding: 4,
+            display: "flex",
+            flexDirection: "column",
+            gap: 3,
+            transform: "translate(-50%, -50%)",
+          }}
         >
-          Open Modal
-        </Button>
-        {/* modal */}
-        <Modal open={open} onClose={handleClose}>
-          <Box
+          <Typography
+            variant="h4"
             sx={{
-              background: theme.custom.thin_background,
-              position: "absolute",
-              top: "50%",
-              left: "50%",
-              width: 800,
-              border: "3 solid black",
-              boxShadow: 24,
-              padding: 4,
-              display: "flex",
-              flexDirection: "column",
-              gap: 3,
-              transform: "translate(-50%, -50%)",
+              textAlign: "center",
+              fontSize: "40px",
+              fontStyle: "normal",
+              fontWeight: 700,
+              color: "primary.secondary",
             }}
           >
-            <Typography
-              variant="h4"
-              sx={{
-                textAlign: "center",
-                fontSize: "40px",
-                fontStyle: "normal",
-                fontWeight: 700,
-                color: "primary.secondary",
-              }}
-            >
-              Please enter your car information
-            </Typography>
+            Please enter your car information
+          </Typography>
 
-            <form onSubmit={handleSubmit}>
-              <Stack spacing={6}>
-                <WhiteTextField
-                  variant="standard"
-                  placeholder="VIN"
-                  name="VIN"
-                  sx={{
-                    textAlign: "center",
-                    fontSize: "40px",
-                    fontStyle: "normal",
-                    fontWeight: 700,
-                    color: "primary.white",
-                  }}
-                />
-                <WhiteTextField
-                  variant="standard"
-                  type="number"
-                  placeholder="Millage"
-                  name="mileage"
-                />
+          <form onSubmit={handleSubmit}>
+            <Stack spacing={6}>
+              <WhiteTextField
+                variant="standard"
+                placeholder="VIN"
+                name="VIN"
+                sx={{
+                  textAlign: "center",
+                  fontSize: "40px",
+                  fontStyle: "normal",
+                  fontWeight: 700,
+                  color: "primary.white",
+                }}
+                onChange={handleInputChange}
+              />
+              <WhiteTextField
+                variant="standard"
+                type="number"
+                placeholder="Millage"
+                name="mileage"
+                onChange={handleInputChange}
+              />
 
-                <Button
-                  variant="standard"
-                  type="submit"
-                  sx={{
-                    borderRadius: "20px",
-                    alignSelf: "center",
-                    px: "15px",
-                    width: "120px",
-                    backgroundColor: "primary.secondary",
-                    color: "primary.black",
-                  }}
-                >
-                  Submit
-                </Button>
-              </Stack>
-            </form>
-          </Box>
-        </Modal>
-      </Box>
+              <Button
+                variant="standard"
+                type="submit"
+                sx={{
+                  borderRadius: "20px",
+                  alignSelf: "center",
+                  px: "15px",
+                  width: "120px",
+                  backgroundColor: "primary.secondary",
+                  color: "primary.black",
+                }}
+              >
+                Submit
+              </Button>
+            </Stack>
+          </form>
+        </Box>
+      </Modal>
     </ThemeProvider>
   );
 }

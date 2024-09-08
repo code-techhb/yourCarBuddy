@@ -14,14 +14,13 @@ import { useAuth } from "@clerk/nextjs";
 
 const MiddleHero = () => {
   // ---------------------- handle function -----------------
-
   const { isSignedIn } = useAuth();
   const router = useRouter();
 
   const RedirectToChatbot = async () => {
     if (!isSignedIn) {
       // Redirect to sign-in page if not signed in
-      router.push("/sign-in");
+      router.push("/sign-up");
     } else {
       // Redirect to the dashboard if signed in
       router.push("/chatbot");
@@ -48,12 +47,13 @@ const MiddleHero = () => {
           display: "flex",
           alignItems: "center",
           justifyContent: "center",
-          marginTop: 15,
-          marginLeft: 5,
-          marginRight: 5,
-          marginRight: 5,
-          marginBottom: 15,
+          background: `${Theme.custom.hero_background_gradient}`,
+          backgroundSize: "cover",
+          backgroundPosition: "center",
+          display: 'flex',
+          minHeight:'100vh'
         }}
+
       >
         <Box
           sx={{
@@ -61,17 +61,20 @@ const MiddleHero = () => {
             maxWidth: "1220px",
             p: 4,
             borderRadius: 2,
+            display: 'flex'
           }}
         >
           <Grid container spacing={1}>
-            <Grid item xs={12} md={8} marginBottom={15}>
+            <Grid item xs={12} md={8} marginBottom={5}>
               <Box
                 sx={{
                   p: 2,
                   // bgcolor: 'black',
                   textAlign: "left",
                   borderRadius: 1,
+                  
                 }}
+                
               >
                 <Box
                   sx={{ maxWidth: "750px", textAlign: "left" }}
@@ -158,13 +161,18 @@ const MiddleHero = () => {
                   borderRadius: 1,
                 }}
               >
-                <Box>
+                 
+                <Box  sx={{
+                      display: 'flex',
+                      justifyContent: 'center',
+                      alignItems: 'center',
+                    }} >
                   <Avatar
                     src="/buddy.png"
                     alt="FAQ Image"
                     sx={{
-                      width: 310,
-                      height: 310,
+                      width: {xs:'250px', sm: '250px', lg: '310px'},
+                      height: {xs:'250px', sm: '250px', lg: '310px'},
                       borderRadius: "50%",
                       background: "transparent",
                     }}
@@ -187,8 +195,8 @@ const MiddleHero = () => {
                   src="/Rectangle_1.png"
                   alt="FAQ Image"
                   sx={{
-                    width: 400,
-                    height: 400,
+                    width: {xs:'250px', sm: '250px', lg: '310px'},
+                      height: {xs:'250px', sm: '250px', lg: '310px'},
                   }}
                 />
               </Box>

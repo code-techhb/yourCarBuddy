@@ -2,7 +2,7 @@
 import { useEffect, useState } from "react";
 import theme from "../components/theme";
 import * as React from "react";
-import DeleteIcon from "@mui/icons-material/Delete";
+import CheckBox from "@mui/icons-material/Checkbox";
 import {
   Box,
   Button,
@@ -34,7 +34,7 @@ import {
   getDoc,
 } from "firebase/firestore";
 import { carPartsCheckedFrequently } from "@/app/utils/elements";
-
+import { useRouter } from "next/navigation";
 export default function Dashboard() {
   // ---------------------- State vars ----------------------------
 
@@ -49,15 +49,18 @@ export default function Dashboard() {
   const [selectedCarData, setSelectedCarData] = useState(null); //added
   const [maintenanceRecords, setMaintenanceRecords] = useState([]);
   const [checkedItems, setCheckedItems] = useState({}); //added
+  const router = useRouter();
+
 
   // ------------------------ Effects-------------------------
   useEffect(() => {
     const fetchCars = async () => {
       if (!isLoaded || !user) {
         console.log("User is not loaded yet.");
-        return;
+        router.push("/sign-in");
+        
       }
-
+      
       try {
         // Assuming you have a collection named 'cars' under 'users' (you may need to change this based on your Firestore structure)
         const userId = user.id;
@@ -68,7 +71,6 @@ export default function Dashboard() {
           id: doc.id,
           ...doc.data(),
         }));
-
         setCars(carList); // Update state with the fetched cars
         // console.log("Car Fetch", carList);
       } catch (error) {
@@ -146,10 +148,13 @@ export default function Dashboard() {
       }));
 
       const selectedCar = carList.find((carItem) => carItem.VIN === carVIN);
+      console.log("Car List:", carList);
+      console.log("Selected Car:", selectedCar);
 
-      if (selectedCar && selectedCar.maintenance) {
-        setMaintenanceRecords(selectedCar.maintenance);
+      //
+      if (selectedCar) {
         setSelectedCarData(selectedCar);
+        setMaintenanceRecords(selectedCar.maintenance || []);
       } else {
         setMaintenanceRecords([]);
         setSelectedCarData(null);
@@ -186,7 +191,7 @@ export default function Dashboard() {
       const carsCollectionRef = collection(db, "users", userId, "cars");
 
       if (!selectedCarData || !selectedCarData.id) {
-        alert("Selected car not found or invalid");
+        alert("Selected car not found.");
         return;
       }
       const carDocRef = doc(carsCollectionRef, selectedCarData.id);
@@ -197,7 +202,6 @@ export default function Dashboard() {
       await updateDoc(carDocRef, {
         maintenance: updatedMaintenance,
       });
-
       handleModalClose();
       // Clear form fields
       setCarPart("");
@@ -240,389 +244,379 @@ export default function Dashboard() {
     setLastChangedDate("");
     setNextChangeDate("");
   };
+
+  // checkmark
   const handleCheckboxChange = (index) => {
     setCheckedItems((prevCheckedItems) => ({
       ...prevCheckedItems,
       [index]: !prevCheckedItems[index],
     }));
-    handleDelete(index); // Or update this logic as needed
+    handleDelete(index);
   };
-
   // ---------------------- UI ----------------------
   return (
     <ThemeProvider theme={theme}>
+      <Navbar />
       {/* outer box  */}
       <Box
+        height="100%"
         sx={{
-          width: "100%",
-          height: "100vh",
           background: theme.custom.background,
+          paddingTop: { xs: "60px", sm: "70px" }, 
+          paddingBottom: { xs: "60px", sm: "70px" },
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          flexDirection: "column",
+          minHeight: '100vh',
+          height: 'auto',
         }}
       >
-        <Navbar />
-        {/* wrapper */}
-        <Box>
-          <Box
+        {/* dropdown */}
+        <FormControl
+          sx={{
+            mb: 2,
+            width: {xs: '350px', sm: '700px', md: '800px', lg:'800px'},
+            backgroundColor: "primary.secondary",
+            marginTop: 5,
+            boxShadow:
+              "13px 15px 24px 0px rgba(255, 255, 255, 0.2), 6px 6px 4px 0px rgba(253, 255, 243, 0.2)",
+          }}
+        >
+          <InputLabel
+            id="demo-simple-select-standard-label"
             sx={{
-              background: theme.custom.background,
-              display: "flex",
-              justifyContent: "center",
-              alignItems: "center",
-              flexDirection: "column",
-              padding: "20px",
-              width: "100%",
+              color: "primary.black",
+              padding: "5px",
             }}
           >
-            {/* dropdown */}
-            <FormControl
-              sx={{
-                mb: 2,
-                width: 800,
-                backgroundColor: "primary.secondary",
-                marginTop: 5,
-                boxShadow:
-                  "13px 15px 24px 0px rgba(255, 255, 255, 0.2), 6px 6px 4px 0px rgba(253, 255, 243, 0.2)",
-              }}
-            >
-              <InputLabel
-                id="demo-simple-select-standard-label"
-                sx={{
-                  color: "primary.black",
-                  padding: "5px",
-                }}
-              >
-                Select a car
-              </InputLabel>
-              <Select
-                labelId="demo-simple-select-label"
-                id="demo-simple-select"
-                variant="standard"
-                open={open}
-                onClose={handleClose}
-                onOpen={handleOpen}
-                value={car}
-                label="Car"
-                onChange={handleChange}
-              >
-                {cars.length === 0 && (
-                  <MenuItem value="">
-                    <em>None</em>
-                  </MenuItem>
-                )}
-                {cars.map((car) => (
-                  <MenuItem key={car.id} value={car.VIN}>
-                    {`${car.brand} ${car.model} (${car.year})`}
-                  </MenuItem>
-                ))}
-              </Select>
-            </FormControl>
+            Select your car
+          </InputLabel>
+          <Select
+            labelId="demo-simple-select-label"
+            id="demo-simple-select"
+            variant="standard"
+            open={open}
+            onClose={handleClose}
+            onOpen={handleOpen}
+            value={car}
+            label="Car"
+            onChange={handleChange}
+          >
+            {cars.length === 0 && (
+              <MenuItem value="">
+                <em>None</em>
+              </MenuItem>
+            )}
+            {cars.map((car) => (
+              <MenuItem key={car.id} value={car.VIN}>
+                {`${car.brand} ${car.model} (${car.year})`}
+              </MenuItem>
+            ))}
+          </Select>
+        </FormControl>
 
-            {/* Maintenance Remainder list  */}
-            <Box width="800px" mb="40px">
-              <Card
-                sx={{
-                  backgroundColor: "primary.white",
-                  color: "primary.black",
-                  marginTop: 4,
-                  maxHeight: 310,
-                  overflow: "auto",
-                }}
-              >
-                <CardContent>
-                  <Box display="flex" alignItems="center">
-                    <BuildIcon></BuildIcon>
-                    <Typography variant="h6">
-                      Maintenance Reminder List
-                    </Typography>
-                  </Box>
+        {/* Maintenance Remainder list  */}
+        <Box mb="40px"  sx={{width: {xs: '350px', sm: '700px', md: '800px', lg:'800px'},}}>
+          <Card
+            sx={{
+              backgroundColor: "primary.white",
+              color: "primary.black",
+              marginTop: 4,
+              maxHeight: 400,
+              overflow: "auto",
+            }}
+          >
+            <CardContent >
+              <Box display="flex" alignItems="center" >
+                <BuildIcon></BuildIcon>
+                <Typography variant="h6">Maintenance Reminder List</Typography>
+              </Box>
 
-                  {maintenanceRecords.map((record, index) => (
-                    <Box
-                      key={
-                        record.id || `${record.carPart}-${record.lastChanged}`
-                      }
-                      display="flex"
-                      justifyContent="space-between"
-                      alignItems="center"
-                      flexDirection="row"
-                      border="1px solid black"
-                      borderRadius="5px"
-                      mt="10px"
-                      p="20px"
-                    >
-                      <Checkbox
+              {maintenanceRecords.map((record, index) => (
+                <Box
+                key={
+                  record.id || `${record.carPart}-${record.lastChanged}`
+                }
+                  display="flex"
+                  justifyContent="space-between"
+                  alignItems="center"
+                  flexDirection="row"
+                  border="1px solid black"
+                  borderRadius="5px"
+                  mt="10px"
+                  p="20px"
+                >
+                  <Checkbox
                         sx={{ cursor: "pointer", color: "GREY" }}
                         onChange={() => handleCheckboxChange(index)}
-                      />
-                      <Box>
-                        <Typography>{record.carPart}</Typography>
-                        {/* <Typography>{record.description}</Typography> */}
-                      </Box>
-                      <Box>
-                        <Typography variant="body1">Due in</Typography>
-                        <Typography variant="h6">
-                          {calculateDueInDays(
+                    />
+                  <Box>
+                    <Typography variant="h6">{record.carPart}</Typography>
+                    <Typography>{record.description}</Typography>
+                  </Box>
+                  <Box>
+                    <Typography variant="body1">Due in</Typography>
+                    <Typography variant="h6">
+                      {calculateDueInDays(
+                        record.lastChanged,
+                        record.nextChange
+                      ) > 0
+                        ? `${calculateDueInDays(
                             record.lastChanged,
                             record.nextChange
-                          ) > 0 ? (
-                            <em>
-                              {calculateDueInDays(
-                                record.lastChanged,
-                                record.nextChange
-                              )}{" "}
-                              Days
-                            </em>
-                          ) : (
-                            "Past Due"
-                          )}
-                        </Typography>
-                      </Box>
-                    </Box>
-                  ))}
-                  {/* CRUD end here */}
-                </CardContent>
-              </Card>
-            </Box>
+                          )} Days`
+                        : "Past Due"}
+                    </Typography>
+                  </Box>
+                </Box>
+              ))}
+            </CardContent>
+          </Card>
+        </Box>
 
-            {/* Maintenance log */}
-            <Box width="800px" mb="10px">
-              <Card
+        {/* Maintenance log */}
+        <Box  mb="10px" sx={{width: {xs: '350px', sm: '700px', md: '800px', lg:'800px'}}}>
+          <Card
+            sx={{
+              backgroundColor: "primary.white",
+              color: "primary.black",
+              maxHeight: 350,
+              overflow: "auto",
+               marginBottom: 5
+            }}
+          >
+            <CardContent>
+              <Box
                 sx={{
-                  backgroundColor: "primary.white",
-                  color: "primary.black",
-                  maxHeight: 350,
-                  overflow: "auto",
+                  display: "flex",
+                  justifyContent: "space-between",
+                  marginTop: 2,
                 }}
               >
-                <CardContent>
-                  <Box
+                <Typography variant="h6">Maintenance Log</Typography>
+
+                {/* add modal */}
+                <Box>
+                  <Modal open={openAddModal} onClose={handleModalClose}>
+                    <Box
+                      sx={{
+                        bgcolor: "primary.white",
+                        position: "absolute",
+                        top: "50%",
+                        left: "50%",
+                        width: {xs:'320px', sm: '550px', md: '600px', lg: '800px'},
+                        padding: 4,
+                        display: "flex",
+                        flexDirection: "column",
+                        gap: 3,
+                        transform: "translate(-50%, -50%)",
+                      }}
+                    >
+                      <Typography
+                        variant="h4"
+                        sx={{
+                          textAlign: "center",
+                          fontSize: {xs: '25px', sm: '30px', md: '35px', lg: "40px"},
+                          fontStyle: "normal",
+                          fontWeight: 700,
+                          color: "primary.secondary",
+                        }}
+                      >
+                        What do you want to track?
+                      </Typography>
+
+                      <Stack spacing={3}>
+                        <FormControl>
+                          <InputLabel id="car-part">Car Part</InputLabel>
+                          <Select
+                            labelId="car-part-select-label"
+                            value={carPart}
+                            
+                            variant="standard"
+                            onChange={handleCarPartChange}
+                          >
+                            {carPartsCheckedFrequently.map((part, index) => (
+                              <MenuItem key={index} value={part}>
+                                {part}
+                              </MenuItem>
+                            ))}
+                          </Select>
+                        </FormControl>
+
+                        <Typography sx={{fontSize: {xs: '18px', sm: '22px', md: '30px', lg: "30px"},}}>
+                          When was the last time you changed it?
+                        </Typography>
+                        <TextField
+                        
+                          variant="standard"
+                          type="date"
+                          placeholder="when was the last time you changed it?"
+                          value={lastChangedDate}
+                          onChange={handleLastChangedDateChange}
+                        />
+
+                        <Typography sx={{fontSize: {xs: '18px', sm: '22px', md: '30px', lg: "30px"},}}>
+                          When is the next time you should change it by?
+                        </Typography>
+                        <TextField
+                        
+                          variant="standard"
+                          type="date"
+                          value={nextChangeDate}
+                          onChange={handleNextChangeDateChange}
+                        />
+
+                        <Button
+                          variant="contained"
+                          type="submit"
+                          sx={{
+                            borderRadius: "20px",
+                            alignSelf: "center",
+                            px: "15px",
+                            width: "120px",
+                            backgroundColor: "primary.secondary",
+                            color: "primary.black",
+                          }}
+                          onClick={handleSubmit}
+                        >
+                          Submit
+                        </Button>
+                      </Stack>
+                    </Box>
+                  </Modal>
+                  {/* add button */}
+                  <Button
+                    variant="contained"
                     sx={{
-                      display: "flex",
-                      justifyContent: "space-between",
-                      marginTop: 2,
+                      borderRadius: "20px",
+                      alignSelf: "center",
+                      px: "15px",
+                      width: "120px",
+                      backgroundColor: "primary.secondary",
+                      color: "primary.black",
+                      fontFamily: "Montserrat",
+                      mb: 1,
+                    }}
+                    onClick={handleModalOpen}
+                    disabled={!car}
+                  >
+                    Add
+                  </Button>
+                </Box>
+              </Box>
+
+              {/* Open this only when click on add recent activities */}
+              <Box
+                display="flex"
+                justifyContent="space-between"
+                alignItems="center"
+                flexDirection="row"
+                mt="20px"
+              >
+                <Box width="800px" mb="40px">
+                  <Card
+                    sx={{
+                      backgroundColor: "primary.white",
+                      color: "primary.black",
                     }}
                   >
-                    <Typography variant="h6">Maintenance Log</Typography>
-
-                    {/* add modal */}
-                    <Box>
-                      <Modal open={openAddModal} onClose={handleModalClose}>
-                        <Box
-                          sx={{
-                            bgcolor: "primary.white",
-                            position: "absolute",
-                            top: "50%",
-                            left: "50%",
-                            width: 800,
-                            padding: 4,
-                            display: "flex",
-                            flexDirection: "column",
-                            gap: 3,
-                            transform: "translate(-50%, -50%)",
-                          }}
-                        >
-                          <Typography
-                            variant="h4"
+                    <CardContent>
+                      {maintenanceRecords.length === 0 ? (
+                        <Typography color="red" sx={{fontSize: {xs:'18px', sm:'18px', md: '22px', lg: '30px'}}}>
+                          <em>
+                            No maintenance records available yet.
+                            <br />
+                            Please select a car first!
+                          </em>
+                        </Typography>
+                      ) : (
+                        <Box overflow={"auto"}>
+                          {/* Header Row */}
+                          <Box
                             sx={{
-                              textAlign: "center",
-                              fontSize: "40px",
-                              fontStyle: "normal",
-                              fontWeight: 700,
-                              color: "primary.secondary",
+                              display: "flex",
+                              justifyContent: "space-between",
+                              alignItems: "center",
+                              mb: 1, // margin bottom for spacing
+                              borderBottom: "1px solid",
+                              borderColor: "divider",
                             }}
                           >
-                            What do you want to track?
-                          </Typography>
-
-                          <Stack spacing={3}>
-                            <FormControl>
-                              <InputLabel id="car-part">Car Part</InputLabel>
-                              <Select
-                                labelId="car-part-select-label"
-                                value={carPart}
-                                variant="standard"
-                                onChange={handleCarPartChange}
+                            <Box sx={{ flex: 2 }}>
+                              <Typography
+                                fontFamily="arial"
+                                marginLeft={2}
+                                variant="subtitle1"
+                                fontWeight="bold"
+                                sx={{fontSize: {xs:'15px', sm:'22px', md: '28', lg: '33'}}}
                               >
-                                {carPartsCheckedFrequently.map(
-                                  (part, index) => (
-                                    <MenuItem key={index} value={part}>
-                                      {part}
-                                    </MenuItem>
-                                  )
-                                )}
-                              </Select>
-                            </FormControl>
+                                CarPart
+                              </Typography>
+                            </Box>
+                            <Box sx={{ flex: 1, textAlign: "left" }}>
+                              <Typography
+                                fontFamily="arial"
+                                variant="subtitle1"
+                                fontWeight="bold"
+                                sx={{fontSize: {xs:'15px', sm:'22px', md: '28', lg: '33'}}}
+                              >
+                                Last Date
+                              </Typography>
+                            </Box>
+                            <Box sx={{ flex: 1, textAlign: "right" }}>
+                              <Typography
+                                fontFamily="arial"
+                                variant="subtitle1"
+                                fontWeight="bold"
+                                sx={{fontSize: {xs:'15px', sm:'22px', md: '28', lg: '33'}}}
+                              >
+                                Next Date
+                              </Typography>
+                            </Box>
+                          </Box>
 
-                            <Typography>
-                              When was the last time you changed it?
-                            </Typography>
-                            <TextField
-                              variant="standard"
-                              type="date"
-                              placeholder="when was the last time you changed it?"
-                              value={lastChangedDate}
-                              onChange={handleLastChangedDateChange}
-                            />
-
-                            <Typography>
-                              When is the next time you should change it by?
-                            </Typography>
-                            <TextField
-                              variant="standard"
-                              type="date"
-                              value={nextChangeDate}
-                              onChange={handleNextChangeDateChange}
-                            />
-
-                            <Button
-                              variant="contained"
-                              type="submit"
-                              sx={{
-                                borderRadius: "20px",
-                                alignSelf: "center",
-                                px: "15px",
-                                width: "120px",
-                                backgroundColor: "primary.secondary",
-                                color: "primary.black",
-                              }}
-                              onClick={handleSubmit}
-                            >
-                              Submit
-                            </Button>
-                          </Stack>
-                        </Box>
-                      </Modal>
-                      {/* add button */}
-                      <Button
-                        variant="contained"
-                        sx={{
-                          borderRadius: "20px",
-                          alignSelf: "center",
-                          px: "15px",
-                          width: "120px",
-                          backgroundColor: "primary.secondary",
-                          color: "primary.black",
-                          fontFamily: "Montserrat",
-                          mb: 1,
-                        }}
-                        onClick={handleModalOpen}
-                        disabled={!car}
-                      >
-                        Add
-                      </Button>
-                    </Box>
-                  </Box>
-
-                  {/* Open this only when click on add recent activities */}
-                  <Box
-                    display="flex"
-                    justifyContent="space-between"
-                    alignItems="center"
-                    flexDirection="row"
-                    mt="20px"
-                  >
-                    <Box width="800px" mb="40px">
-                      <Card
-                        sx={{
-                          backgroundColor: "primary.white",
-                          color: "primary.black",
-                        }}
-                      >
-                        <CardContent>
-                          {maintenanceRecords.length === 0 ? (
-                            <Typography color="red">
-                              <em>
-                                No maintenance records available yet.
-                                <br />
-                                Please select a car first!
-                              </em>
-                            </Typography>
-                          ) : (
-                            <Box overflow={"auto"}>
-                              {/* Header Row */}
-                              <Box
+                          {/* Data Rows */}
+                          <List>
+                            {maintenanceRecords.map((record, index) => (
+                              <ListItem
+                                key={index}
                                 sx={{
                                   display: "flex",
                                   justifyContent: "space-between",
                                   alignItems: "center",
-                                  mb: 1,
-                                  borderBottom: "1px solid",
-                                  borderColor: "divider",
                                 }}
                               >
                                 <Box sx={{ flex: 2 }}>
-                                  <Typography
-                                    fontFamily="arial"
-                                    marginLeft={2}
-                                    variant="subtitle1"
-                                    fontWeight="bold"
-                                  >
-                                    CarPart
+                                  <Typography variant="body1" sx={{fontSize: {xs:'11px', sm:'15px', md: '22px', lg: '22px'}}}>
+                                    {record.carPart}
                                   </Typography>
                                 </Box>
                                 <Box sx={{ flex: 1, textAlign: "left" }}>
-                                  <Typography
-                                    fontFamily="arial"
-                                    variant="subtitle1"
-                                    fontWeight="bold"
-                                  >
-                                    Last Date
+                                  <Typography variant="body1" sx={{fontSize: {xs:'11px', sm:'15px', md: '22px', lg: '22px'}}}>
+                                    {record.lastChanged}
                                   </Typography>
                                 </Box>
                                 <Box sx={{ flex: 1, textAlign: "right" }}>
-                                  <Typography
-                                    fontFamily="arial"
-                                    variant="subtitle1"
-                                    fontWeight="bold"
-                                  >
-                                    Next Date
+                                  <Typography variant="body1" sx={{fontSize: {xs:'11px', sm:'15px', md: '22px', lg: '22px'}}}>
+                                    {record.nextChange}
                                   </Typography>
                                 </Box>
-                              </Box>
-
-                              {/* Data Rows */}
-                              <List>
-                                {maintenanceRecords.map((record, index) => (
-                                  <ListItem
-                                    key={index}
-                                    sx={{
-                                      display: "flex",
-                                      justifyContent: "space-between",
-                                      alignItems: "center",
-                                    }}
-                                  >
-                                    <Box sx={{ flex: 2 }}>
-                                      <Typography variant="body1">
-                                        {record.carPart}
-                                      </Typography>
-                                    </Box>
-                                    <Box sx={{ flex: 1, textAlign: "left" }}>
-                                      <Typography variant="body1">
-                                        {record.lastChanged}
-                                      </Typography>
-                                    </Box>
-                                    <Box sx={{ flex: 1, textAlign: "right" }}>
-                                      <Typography variant="body1">
-                                        {record.nextChange}
-                                      </Typography>
-                                    </Box>
-                                  </ListItem>
-                                ))}
-                              </List>
-                            </Box>
-                          )}
-                        </CardContent>
-                      </Card>
-                    </Box>
-                  </Box>
-                </CardContent>
-              </Card>
-            </Box>
-          </Box>
-          {/* Bottom Navigation */}
-          <BottomNav />
+                              </ListItem>
+                            ))}
+                          </List>
+                        </Box>
+                      )}
+                    </CardContent>
+                  </Card>
+                </Box>
+              </Box>
+            </CardContent>
+          </Card>
         </Box>
       </Box>
+      {/* Bottom Navigation */}
+      <BottomNav />
     </ThemeProvider>
   );
 }
