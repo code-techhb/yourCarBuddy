@@ -19,14 +19,14 @@ export default function SignInPage() {
 
   // ----------------- UI ------------------
   return (
-    <ThemeProvider theme={theme}>
+    <ThemeProvider theme={Theme}>
       <Box
         sx={{
           bgcolor: Theme,
           height: "100vh",
           display: "flex",
           flexDirection: "column",
-          backgroundColor: "primary.main",
+          backgroundColor: Theme.palette.primary.main,
         }}
       >
         {/* Nav bar */}
@@ -73,7 +73,7 @@ export default function SignInPage() {
             <SignIn
               appearance={{
                 baseTheme: clerkTheme,
-                variables: { colorPrimary: "primary.secondary" },
+                variables: { colorPrimary: Theme.palette.text.green },
               }}
             />
           </Paper>

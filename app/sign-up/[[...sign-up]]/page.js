@@ -25,14 +25,14 @@ export default function SignUpPage() {
 
   // ----------------- UI ------------------
   return (
-    <ThemeProvider theme={theme}>
+    <ThemeProvider theme={Theme}>
       <Box
         sx={{
           bgcolor: Theme,
           height: "100vh",
           display: "flex",
           flexDirection: "column",
-          backgroundColor: "primary.main",
+          backgroundColor: Theme.palette.primary.main,
         }}
       >
         {/* Nav bar */}
