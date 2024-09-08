@@ -42,7 +42,6 @@ export default function SignInPage() {
           }}
         >
           <Paper
-            //elevation={24}
             sx={{
               p: 4,
               maxWidth: "sm",
@@ -65,7 +64,7 @@ export default function SignInPage() {
                 fontWeight: 700,
                 color: Theme.palette.text.green,
                 marginBottom: "40px",
-                lineHeight: "1.5 !important", // Force the line height to apply
+                lineHeight: "1.5 !important",
                 letterSpacing: "0.05em",
               }}
             >
@@ -74,12 +73,11 @@ export default function SignInPage() {
             <SignIn
               appearance={{
                 baseTheme: clerkTheme,
-                variables: { colorPrimary: "#00D779" },
+                variables: { colorPrimary: "primary.secondary" },
               }}
             />
           </Paper>
         </Box>
-
         {/* footer */}
         <Footer />
       </Box>

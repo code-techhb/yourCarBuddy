@@ -1,6 +1,4 @@
 "use client";
-
-/// Bottom navigation
 import React, { useState } from "react";
 import theme from "./theme";
 import {
@@ -44,36 +42,35 @@ const BottomNav = () => {
 
   return (
     <ThemeProvider theme={theme}>
-      <Box
+      <BottomNavigation
+        position="relative"
+        value={value}
+        onChange={(event, newValue) => handleNavigation(newValue)}
+        showLabels
         sx={{
-          width: "100%",
+          backgroundColor: "primary.secondary",
+          position: "fixed",
+          bottom: 0,
+          left: 0,
+          right: 0,
         }}
       >
-        <BottomNavigation
-          position="static"
-          value={value}
-          onChange={(event, newValue) => handleNavigation(newValue)}
-          showLabels
-          sx={{ backgroundColor: "primary.secondary" }}
-        >
-          {/* will have to add corresponding routes to each icon */}
-          <BottomNavigationAction
-            label="Profile"
-            icon={<PersonIcon />}
-            sx={{ color: "primary.black" }}
-          />
-          <BottomNavigationAction
-            label="Chat"
-            icon={<ChatIcon />}
-            sx={{ color: "primary.black" }}
-          />
-          <BottomNavigationAction
-            label="Dashboard"
-            icon={<NoteIcon />}
-            sx={{ color: "primary.black" }}
-          />
-        </BottomNavigation>
-      </Box>
+        <BottomNavigationAction
+          label="Profile"
+          icon={<PersonIcon />}
+          sx={{ color: "primary.black" }}
+        />
+        <BottomNavigationAction
+          label="Chat"
+          icon={<ChatIcon />}
+          sx={{ color: "primary.black" }}
+        />
+        <BottomNavigationAction
+          label="Dashboard"
+          icon={<NoteIcon />}
+          sx={{ color: "primary.black" }}
+        />
+      </BottomNavigation>
     </ThemeProvider>
   );
 };

@@ -17,6 +17,12 @@ const clerkTheme = {
 export default function SignUpPage() {
   const router = useRouter();
 
+  // // Handle sign-up completion
+  // const handleSignUpComplete = () => {
+  //   // Redirect to the registration page after sign-up
+  //   router.push("/register");
+  // };
+
   // ----------------- UI ------------------
   return (
     <ThemeProvider theme={theme}>
@@ -76,6 +82,7 @@ export default function SignUpPage() {
                 baseTheme: clerkTheme,
                 variables: { colorPrimary: "#00D779" },
               }}
+              // onSignUpComplete={handleSignUpComplete}
             />
           </Paper>
         </Box>

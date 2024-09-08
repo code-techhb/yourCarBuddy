@@ -4,7 +4,6 @@ import Theme from "./theme";
 import { useRouter } from "next/navigation";
 import React, { useEffect } from "react";
 import {
-  ClerkProvider,
   SignInButton,
   SignOutButton,
   SignedIn,
@@ -77,24 +76,9 @@ const Navbar = () => {
                 />
               </a>
             </Box>
-            <Box>
-              {/* <Button
-                  variant="outlined"
-                  sx={{
-                    borderRadius: "16px",
-                    boxShadow: "none",
-                    fontFamily: "Poppins",
-                    backgroundColor: Theme.palette.primary.dark,
-                    "&:hover": {
-                      bgcolor: Theme.palette.text.darker,
-                    },
-                  }}
-                  onClick={handleRedirectChatbot}
-                >
-                  Chat with AI
 
-                  
-                </Button> */}
+            <Box>
+              {/* When user is not signed in */}
               <SignedOut>
                 <Button
                   variant="text"
@@ -150,7 +134,6 @@ const Navbar = () => {
                 >
                   Contact US
                 </Button>
-
                 <SignInButton>
                   <Button
                     variant="text"
@@ -180,7 +163,6 @@ const Navbar = () => {
                     LOG IN
                   </Button>
                 </SignInButton>
-
                 <SignUpButton>
                   <Button
                     variant="text"
@@ -212,6 +194,7 @@ const Navbar = () => {
                 </SignUpButton>
               </SignedOut>
 
+              {/* When user is signed */}
               <SignedIn>
                 <Button
                   variant="text"
@@ -238,9 +221,8 @@ const Navbar = () => {
                   }}
                   onClick={handleRedirectSUpport}
                 >
-                  Support
+                  Feedback
                 </Button>
-
                 <UserButton />
               </SignedIn>
             </Box>

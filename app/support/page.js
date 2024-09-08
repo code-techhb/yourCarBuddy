@@ -23,12 +23,11 @@ export default function ContactUs() {
       <Box
         width="100vw"
         minHeight="100vh"
-        height="100vh"
-        //sx={{background: `${Theme.custom.hero_background_gradient}`}}
         display="flex"
         flexDirection="column"
         alignItems="center"
         justifyContent="center"
+        bgcolor="primary.main"
       >
         {/* Nav bar */}
 
@@ -36,7 +35,6 @@ export default function ContactUs() {
         <Box
           width="100vw"
           minHeight="100vh"
-          sx={{ background: `${Theme.custom.hero_background_gradient}` }}
           display="flex"
           flexDirection="column"
           alignItems="center"
@@ -63,8 +61,7 @@ export default function ContactUs() {
                   xs: "22px",
                   sm: "28px",
                   md: "40px",
-                  lg: "48px",
-                },
+                  lg: "48px",},
                 fontStyle: "normal",
                 fontWeight: 700,
                 color: Theme.palette.text.white,
@@ -146,6 +143,7 @@ export default function ContactUs() {
                     fontSize: "14px",
                     fontFamily: "Montserrat",
                     borderRadius: "16px",
+                    color: "primary.main",
                   }}
                 >
                   LinkedIn
@@ -190,6 +188,7 @@ export default function ContactUs() {
                     fontSize: "14px",
                     fontFamily: "Montserrat",
                     borderRadius: "16px",
+                    color: "primary.main",
                   }}
                 >
                   LinkedIn
@@ -232,6 +231,7 @@ export default function ContactUs() {
                     fontSize: "14px",
                     fontFamily: "Montserrat",
                     borderRadius: "16px",
+                    color: "primary.main",
                   }}
                 >
                   LinkedIn
