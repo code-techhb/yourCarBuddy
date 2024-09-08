@@ -1,10 +1,8 @@
 "use client";
-import theme from "@/app/components/theme";
 import Navbar from "@/app/components/navbar";
 import Footer from "@/app/components/footer";
 import { ThemeProvider, Box, Paper, Typography, Button } from "@mui/material";
 import { SignIn } from "@clerk/nextjs";
-import { useRouter } from "next/navigation";
 import Theme from "@/app/components/theme";
 // ---------------------- const vars -----------------
 const clerkTheme = {
@@ -15,8 +13,6 @@ const clerkTheme = {
 };
 
 export default function SignInPage() {
-  const router = useRouter();
-
   // ----------------- UI ------------------
   return (
     <ThemeProvider theme={Theme}>
@@ -42,6 +38,7 @@ export default function SignInPage() {
           }}
         >
           <Paper
+            elevation={0}
             sx={{
               p: 4,
               maxWidth: "sm",

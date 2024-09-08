@@ -5,7 +5,7 @@ import { ClerkProvider } from "@clerk/nextjs";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata = {
-  title: "Car Buddy",
+  title: "CarBuddy",
   description:
     "Car Buddy simplifies your car maintenance with smart reminders and insightful advice. Say goodbye to confusion and overpaying—experience effortless car care with just a few taps.",
 };

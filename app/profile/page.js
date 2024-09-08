@@ -1,9 +1,7 @@
 "use client";
 import * as React from "react";
 import { useState, useEffect } from "react";
-import { styled } from "@mui/material/styles";
 import {
-  CssBaseline,
   Box,
   ThemeProvider,
   Typography,
@@ -42,7 +40,7 @@ const Profile = () => {
     if (!isLoaded) return;
 
     if (!user) {
-      router.push("/login");
+      router.push("/sign-in");
       return;
     }
     const fetchCars = async () => {

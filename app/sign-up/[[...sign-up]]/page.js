@@ -1,5 +1,4 @@
 "use client";
-import theme from "@/app/components/theme";
 import Navbar from "@/app/components/navbar";
 import Footer from "@/app/components/footer";
 import { ThemeProvider, Box, Paper, Typography, Button } from "@mui/material";
@@ -16,13 +15,6 @@ const clerkTheme = {
 
 export default function SignUpPage() {
   const router = useRouter();
-
-  // // Handle sign-up completion
-  // const handleSignUpComplete = () => {
-  //   // Redirect to the registration page after sign-up
-  //   router.push("/register");
-  // };
-
   // ----------------- UI ------------------
   return (
     <ThemeProvider theme={Theme}>
@@ -48,7 +40,7 @@ export default function SignUpPage() {
           }}
         >
           <Paper
-            //elevation={24}
+            elevation={0}
             sx={{
               p: 4,
               maxWidth: "sm",
@@ -71,7 +63,7 @@ export default function SignUpPage() {
                 fontWeight: 700,
                 color: Theme.palette.text.green,
                 marginBottom: "40px",
-                lineHeight: "1.5 !important", // Force the line height to apply
+                lineHeight: "1.5 !important",
                 letterSpacing: "0.05em",
               }}
             >
@@ -82,7 +74,6 @@ export default function SignUpPage() {
                 baseTheme: clerkTheme,
                 variables: { colorPrimary: "#00D779" },
               }}
-              // onSignUpComplete={handleSignUpComplete}
             />
           </Paper>
         </Box>
