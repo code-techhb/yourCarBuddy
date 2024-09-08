@@ -57,7 +57,6 @@ export default function Dashboard() {
         console.log("User is not loaded yet.");
         return;
       }
-
       try {
         // Assuming you have a collection named 'cars' under 'users' (you may need to change this based on your Firestore structure)
         const userId = user.id;
@@ -68,7 +67,6 @@ export default function Dashboard() {
           id: doc.id,
           ...doc.data(),
         }));
-
         setCars(carList); // Update state with the fetched cars
         // console.log("Car Fetch", carList);
       } catch (error) {
@@ -146,10 +144,13 @@ export default function Dashboard() {
       }));
 
       const selectedCar = carList.find((carItem) => carItem.VIN === carVIN);
+      console.log("Car List:", carList);
+      console.log("Selected Car:", selectedCar);
 
-      if (selectedCar && selectedCar.maintenance) {
-        setMaintenanceRecords(selectedCar.maintenance);
+      //
+      if (selectedCar) {
         setSelectedCarData(selectedCar);
+        setMaintenanceRecords(selectedCar.maintenance || []);
       } else {
         setMaintenanceRecords([]);
         setSelectedCarData(null);
@@ -186,7 +187,7 @@ export default function Dashboard() {
       const carsCollectionRef = collection(db, "users", userId, "cars");
 
       if (!selectedCarData || !selectedCarData.id) {
-        alert("Selected car not found or invalid");
+        alert("Selected car not found.");
         return;
       }
       const carDocRef = doc(carsCollectionRef, selectedCarData.id);
@@ -197,7 +198,6 @@ export default function Dashboard() {
       await updateDoc(carDocRef, {
         maintenance: updatedMaintenance,
       });
-
       handleModalClose();
       // Clear form fields
       setCarPart("");
@@ -240,12 +240,14 @@ export default function Dashboard() {
     setLastChangedDate("");
     setNextChangeDate("");
   };
+
+  // checkmark
   const handleCheckboxChange = (index) => {
     setCheckedItems((prevCheckedItems) => ({
       ...prevCheckedItems,
       [index]: !prevCheckedItems[index],
     }));
-    handleDelete(index); // Or update this logic as needed
+    handleDelete(index);
   };
 
   // ---------------------- UI ----------------------
