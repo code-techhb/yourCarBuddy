@@ -18,9 +18,9 @@ export function useAuthRedirection() {
         const isFirstSignIn = user.createdAt === user.updatedAt;
 
         if (isFirstSignIn) {
-          router.push("/profile");
-        } else {
           router.push("/register");
+        } else {
+          router.push("/profile");
         }
       }
     }
