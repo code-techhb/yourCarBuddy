@@ -7,7 +7,7 @@ import {
   Avatar,
   Link,
   Button,
-  CssBaseline
+  CssBaseline,
 } from "@mui/material";
 import Theme from "../components/theme";
 import Navbar from "../components/navbar";
@@ -19,30 +19,27 @@ export default function ContactUs() {
   return (
     <ThemeProvider theme={Theme}>
       <Navbar></Navbar>
-       <CssBaseline></CssBaseline>
-       <Box
+      <CssBaseline></CssBaseline>
+      <Box
         width="100vw"
         minHeight="100vh"
-        height= "100vh"
-        //sx={{background: `${Theme.custom.hero_background_gradient}`}}
         display="flex"
         flexDirection="column"
         alignItems="center"
         justifyContent="center"
+        bgcolor="primary.main"
       >
         {/* Nav bar */}
 
-        
         {/* Main Content */}
         <Box
-        width="100vw"
-        minHeight="100vh"
-        sx={{background: `${Theme.custom.hero_background_gradient}`}}
-        display="flex"
-        flexDirection="column"
-        alignItems="center"
-        justifyContent="center"
-      >
+          width="100vw"
+          minHeight="100vh"
+          display="flex"
+          flexDirection="column"
+          alignItems="center"
+          justifyContent="center"
+        >
           {/* content */}
           <Box
             display="flex"
@@ -61,10 +58,10 @@ export default function ContactUs() {
                 fontFamily: "Paytone One",
                 fontSize: "32px",
                 fontSize: {
-                  xs: "22px", 
-                  sm: "28px", 
-                  md: "40px", 
-                  lg: "50px", 
+                  xs: "22px",
+                  sm: "28px",
+                  md: "40px",
+                  lg: "50px",
                 },
                 fontStyle: "normal",
                 fontWeight: 700,
@@ -72,20 +69,24 @@ export default function ContactUs() {
                 mt: 2,
               }}
             >
-              What would you like to see in this app to make it more accessible and helpful to you ?
+              What would you like to see in this app to make it more accessible
+              and helpful to you ?
             </Typography>
 
             <Typography
               variant="h6"
               fontWeight="bold"
-              sx={{ mt: 2, fontFamily: "Montserrat",
-                color: Theme.palette.text.green, 
+              sx={{
+                mt: 2,
+                fontFamily: "Montserrat",
+                color: Theme.palette.text.green,
                 fontSize: {
-                  xs: "15px", 
-                  sm: "18px", 
-                  md: "25px", 
-                  lg: "28px", 
-                },}}
+                  xs: "15px",
+                  sm: "18px",
+                  md: "25px",
+                  lg: "28px",
+                },
+              }}
             >
               Reach out to the team on LinkedIn.
             </Typography>
@@ -118,15 +119,19 @@ export default function ContactUs() {
                   src="/H.JPG"
                   sx={{ width: 100, height: 100, border: "2px solid #1D1632" }}
                 />
-                <Typography mt={1} align="center"
-                sx={{
-                  color: Theme.palette.text.white, 
-                  fontSize: {
-                    xs: "15px", 
-                    sm: "18px", 
-                    md: "25px", 
-                    lg: "22px", 
-                  },}}>
+                <Typography
+                  mt={1}
+                  align="center"
+                  sx={{
+                    color: Theme.palette.text.white,
+                    fontSize: {
+                      xs: "15px",
+                      sm: "18px",
+                      md: "25px",
+                      lg: "22px",
+                    },
+                  }}
+                >
                   Houlaymatou B.
                 </Typography>
                 <Button
@@ -139,6 +144,7 @@ export default function ContactUs() {
                     fontSize: "14px",
                     fontFamily: "Montserrat",
                     borderRadius: "16px",
+                    color: "primary.main",
                   }}
                 >
                   LinkedIn
@@ -157,14 +163,19 @@ export default function ContactUs() {
                   src="/g.png"
                   sx={{ width: 100, height: 100, border: "2px solid #1D1632" }}
                 />
-                <Typography mt={1} align="center" sx={{
-                  color: Theme.palette.text.white, 
-                  fontSize: {
-                    xs: "15px", 
-                    sm: "18px", 
-                    md: "25px", 
-                    lg: "22px", 
-                  },}}>
+                <Typography
+                  mt={1}
+                  align="center"
+                  sx={{
+                    color: Theme.palette.text.white,
+                    fontSize: {
+                      xs: "15px",
+                      sm: "18px",
+                      md: "25px",
+                      lg: "22px",
+                    },
+                  }}
+                >
                   Giovanni G.
                 </Typography>
 
@@ -178,6 +189,7 @@ export default function ContactUs() {
                     fontSize: "14px",
                     fontFamily: "Montserrat",
                     borderRadius: "16px",
+                    color: "primary.main",
                   }}
                 >
                   LinkedIn
@@ -195,14 +207,19 @@ export default function ContactUs() {
                   src="/K.jpg"
                   sx={{ width: 100, height: 100, border: "2px solid #1D1632" }}
                 />
-                <Typography mt={1} align="center" sx={{
-                  color: Theme.palette.text.white, 
-                  fontSize: {
-                    xs: "15px", 
-                    sm: "18px", 
-                    md: "25px", 
-                    lg: "22px", 
-                  },}}>
+                <Typography
+                  mt={1}
+                  align="center"
+                  sx={{
+                    color: Theme.palette.text.white,
+                    fontSize: {
+                      xs: "15px",
+                      sm: "18px",
+                      md: "25px",
+                      lg: "22px",
+                    },
+                  }}
+                >
                   Katherine L.
                 </Typography>
                 <Button
@@ -215,6 +232,7 @@ export default function ContactUs() {
                     fontSize: "14px",
                     fontFamily: "Montserrat",
                     borderRadius: "16px",
+                    color: "primary.main",
                   }}
                 >
                   LinkedIn
@@ -222,11 +240,7 @@ export default function ContactUs() {
               </Box>
             </Box>
           </Box>
-          
         </Box>
-
-    
-        
       </Box>
       <Footer />
     </ThemeProvider>

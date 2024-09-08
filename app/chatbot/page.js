@@ -12,13 +12,12 @@ import {
   Avatar,
   IconButton,
 } from "@mui/material";
-import Theme from "../components/theme";
+import theme from "../components/theme";
 import Navbar from "../components/navbar";
 import { MuiMarkdown } from "mui-markdown";
 import PhotoCamera from "@mui/icons-material/PhotoCamera";
 import BottomNav from "../components/bottom_nav";
-import { useUser } from "@clerk/nextjs"; // Import useUser
-import RegisterForm from "../register/page";
+import { useUser } from "@clerk/nextjs";
 
 export default function Home() {
   // --------------------------------- State Management vars -----------------------
@@ -175,13 +174,13 @@ export default function Home() {
   };
   // ----------------- UI --------------------------
   return (
-    <ThemeProvider theme={Theme}>
+    <ThemeProvider theme={theme}>
       {/* background */}
       <Navbar></Navbar>
       <Box
         minHeight={"100vh"}
         // height="100vh"
-        sx={{ bgcolor: Theme.palette.primary.main }}
+        sx={{ bgcolor: theme.palette.primary.main }}
         display="flex"
         alignItems="center"
         justifyContent="center"
@@ -204,13 +203,13 @@ export default function Home() {
         >
           <Box
             height="70px"
-            width="100%" // Adjust width to fill the container
+            width="100%"
             sx={{
-              bgcolor: Theme.palette.primary.secondary,
-              display: "flex", // Enable flexbox
-              alignItems: "center", // Center vertically
-              justifyContent: "center", // Center horizontally
-              borderTopLeftRadius: "12px", // Only top-left corner
+              bgcolor: theme.palette.primary.secondary,
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              borderTopLeftRadius: "12px",
               borderTopRightRadius: "12px",
               marginBottom: "30px",
             }}
@@ -222,7 +221,7 @@ export default function Home() {
           <Stack
             sx={{
               height: "800px",
-              width: "70%", // change this later
+              width: "70%",
               borderRadius: "12px",
               borderColor: "black",
             }}
@@ -255,7 +254,7 @@ export default function Home() {
                 >
                   <Avatar
                     sx={{
-                      bgcolor: Theme.palette.text.darker,
+                      bgcolor: theme.palette.text.darker,
                       width: 50,
                       height: 50,
                     }}
@@ -265,18 +264,18 @@ export default function Home() {
                     sx={{
                       bgcolor:
                         message.role === "assistant"
-                          ? Theme.palette.primary.dark
-                          : Theme.palette.primary.beige2,
+                          ? theme.palette.primary.dark
+                          : theme.palette.primary.beige2,
                       color:
                         message.role === "assistant"
-                          ? Theme.palette.text.light
-                          : Theme.palette.text.black,
+                          ? theme.palette.text.light
+                          : theme.palette.text.black,
                       borderRadius: "12px",
                       padding: "30px",
-                      whiteSpace: "normal", // Ensures that text wraps and doesn't overflow
-                      wordBreak: "break-word", // Ensures long words break to fit the container
-                      overflowWrap: "break-word", // Ensures that text breaks at the end of lines
-                      maxWidth: "100%", // Limits width to the container's width
+                      whiteSpace: "normal",
+                      wordBreak: "break-word",
+                      overflowWrap: "break-word",
+                      maxWidth: "100%",
                     }}
                   >
                     {message.type === "image" ? (
@@ -318,7 +317,7 @@ export default function Home() {
               <IconButton
                 component="label"
                 sx={{
-                  color: Theme.palette.text.dark,
+                  color: theme.palette.text.dark,
                 }}
               >
                 <PhotoCamera />
@@ -346,10 +345,10 @@ export default function Home() {
                   px: "15px",
                   width: "120px",
                   fontFamily: "Montserrat",
-                  bgcolor: Theme.palette.primary.secondary,
+                  bgcolor: theme.palette.primary.secondary,
                   fontWeight: "Bold",
-                  color: Theme.palette.text.black,
-                  //border: (theme) => `1px solid ${theme.palette.primary.dark}`,
+                  color: theme.palette.text.black,
+
                   textAlign: "right",
                 }}
                 onClick={sendMessage}

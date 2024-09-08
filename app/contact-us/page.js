@@ -21,22 +21,20 @@ export default function ContactUs() {
       <Navbar></Navbar>
       <CssBaseline></CssBaseline>
       <Box
-        width="100vw"
+        width="100%"
         minHeight="100vh"
-        height="100vh"
-        //sx={{background: `${Theme.custom.hero_background_gradient}`}}
         display="flex"
         flexDirection="column"
         alignItems="center"
         justifyContent="center"
+        bgcolor="primary.main"
       >
         {/* Nav bar */}
 
         {/* Main Content */}
         <Box
-          width="100vw"
+          width="100wh"
           minHeight="100vh"
-          sx={{ background: `${Theme.custom.hero_background_gradient}` }}
           display="flex"
           flexDirection="column"
           alignItems="center"
