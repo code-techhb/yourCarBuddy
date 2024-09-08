@@ -125,7 +125,7 @@ const RegisterForm = ({ open, handleClose, onAddCar }) => {
             position: "absolute",
             top: "50%",
             left: "50%",
-            width: 800,
+            width: {xs: '90%', sm: '60%', md: '600', lg: '50%'},
             border: "3 solid black",
             boxShadow: 24,
             padding: 4,
@@ -139,7 +139,7 @@ const RegisterForm = ({ open, handleClose, onAddCar }) => {
             variant="h4"
             sx={{
               textAlign: "center",
-              fontSize: "40px",
+              fontSize: {xs: '18', sm:'22', md: '30', lg:'40px'},
               fontStyle: "normal",
               fontWeight: 700,
               color: "primary.secondary",

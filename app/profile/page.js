@@ -94,11 +94,12 @@ const Profile = () => {
 
   return (
     <ThemeProvider theme={Theme}>
-      <Box width="100wh" height="100vh" backgroundColor="primary.light">
+      <Box width="100wh" minHeight="100vh" height='auto' backgroundColor="primary.light">
         <Navbar />
         {/* wrapper */}
         <Box
           sx={{
+            
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
@@ -109,10 +110,10 @@ const Profile = () => {
           {/* user box*/}
           <Box
             sx={{
+              marginTop: 10,
               width: "100%",
-              maxWidth: "1220px",
-              borderRadius: 5,
               maxWidth: "1000px",
+              borderRadius: 5,
               border: "2px solid primary.main",
               bgcolor: "white",
               display: "flex",
@@ -146,7 +147,7 @@ const Profile = () => {
                 alignItems: "center",
               }}
             >
-              <Typography align="left" sx={{ display: "flex", flexGrow: 1 }}>
+              <Typography align="left" sx={{ display: "flex", flexGrow: 1, fontSize:{sx: '12px'} }}>
                 Your Garage
               </Typography>
               <Button
@@ -166,8 +167,9 @@ const Profile = () => {
                   textTransform: "none",
                 }}
                 onClick={handleOpenModal}
+
               >
-                Add new Car
+                New Car
               </Button>
             </Box>
 

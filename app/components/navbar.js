@@ -59,7 +59,7 @@ const Navbar = () => {
 
   return (
     <ThemeProvider theme={Theme}>
-      <AppBar position="static" elevation={0}>
+      <AppBar position="fixed" elevation={0}>
         <Toolbar>
           <Box
             display="flex"

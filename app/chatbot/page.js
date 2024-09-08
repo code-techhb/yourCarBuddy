@@ -166,7 +166,14 @@ export default function Home() {
     p: ({ children }) => (
       <Typography
         variant="body1"
-        sx={{ marginBottom: "16px", lineHeight: 1.6 }}
+        sx={{ marginBottom: "16px", lineHeight: 1.6, 
+          fontSize: {
+            xs: '0.75rem', // 12px
+            sm: '0.875rem', // 14px
+            md: '1rem', // 16px
+            lg: '1.25rem', // 20px
+          },
+        }}
       >
         {children}
       </Typography>
@@ -179,7 +186,6 @@ export default function Home() {
       <Navbar></Navbar>
       <Box
         minHeight={"100vh"}
-        // height="100vh"
         sx={{ bgcolor: theme.palette.primary.main }}
         display="flex"
         alignItems="center"
@@ -189,16 +195,16 @@ export default function Home() {
       >
         {/* Box Outside */}
         <Box
-          height="900px"
-          width="80%"
+          width="90%"
           alignItems="center"
           justifyContent="center"
           display="flex"
           flexDirection="column"
           sx={{
             border: (theme) => `1px solid ${theme.palette.primary.secondary}`,
-            bgcolor: "white",
+            bgcolor: "white", //white
             borderRadius: "12px",
+            height:{xs: '700px', sm: '700px', md: '800px', lg: '800px'},
           }}
         >
           <Box
@@ -220,8 +226,8 @@ export default function Home() {
           {/* chat window */}
           <Stack
             sx={{
-              height: "800px",
-              width: "70%",
+              height:{xs: '700px', sm: '700px', md: '800px', lg: '750px'},
+              width: "90%",
               borderRadius: "12px",
               borderColor: "black",
             }}
@@ -270,12 +276,19 @@ export default function Home() {
                         message.role === "assistant"
                           ? theme.palette.text.light
                           : theme.palette.text.black,
+                          fontSize: {
+                            xs: '0.75rem', // 12px
+                            sm: '0.875rem', // 14px
+                            md: '1rem', // 16px
+                            lg: '1.25rem', // 20px
+                          },
                       borderRadius: "12px",
                       padding: "30px",
                       whiteSpace: "normal",
                       wordBreak: "break-word",
                       overflowWrap: "break-word",
                       maxWidth: "100%",
+                      
                     }}
                   >
                     {message.type === "image" ? (
@@ -311,6 +324,8 @@ export default function Home() {
                 border: (theme) => `1px solid ${theme.palette.primary.dark}`,
                 boxShadow: "1",
                 marginBottom: "40px",
+                justifyContent: "center",
+                alignItems: "center",
               }}
             >
               {/* Image upload button */}
@@ -329,8 +344,9 @@ export default function Home() {
                 />
               </IconButton>
               <TextField
-                width="80%"
+                sx={{ width: '80%' }}
                 variant="standard"
+                multiline
                 fullWidth
                 placeholder="Type here..."
                 value={message}
@@ -343,12 +359,13 @@ export default function Home() {
                 sx={{
                   borderRadius: "20px",
                   px: "15px",
+                  
                   width: "120px",
+                  height: "48px",
                   fontFamily: "Montserrat",
                   bgcolor: theme.palette.primary.secondary,
                   fontWeight: "Bold",
                   color: theme.palette.text.black,
-
                   textAlign: "right",
                 }}
                 onClick={sendMessage}

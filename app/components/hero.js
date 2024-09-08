@@ -34,6 +34,12 @@ const Hero = () => {
         alignItems="center"
         justifyContent="center"
         gap={4}
+        sx={{backgroundImage: `${Theme.custom.hero_background_gradient}, 
+          url('car.png')`,
+        backgroundSize: "cover",
+        backgroundPosition: "center",
+        height: '100vh',
+        }}
       >
         <Box
           sx={{ maxWidth: "750px", textAlign: "center" }}

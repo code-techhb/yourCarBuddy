@@ -13,45 +13,49 @@ import Theme from '../components/theme';
 const FeaturesAI = () => {
   return (
     <ThemeProvider theme={Theme}>
-      {/* Purple bg */}
+      {/* Purple background */}
       <Box
-        padding="60px 20px"
+        padding={{ xs: '40px 10px', sm: '50px 15px', md: '60px 20px' }} // Responsive padding
         sx={{
-          //backgroundColor: Theme.palette.primary.beige,
+          backgroundColor: "#D1DFBA",
           textAlign: 'center',
           display: 'flex',
           justifyContent: 'center',
           alignItems: 'center',
           flexDirection: 'column',
+          minHeight: '100vh', // Set minHeight to avoid overlaying and make it responsive
+          boxSizing: 'border-box', // Ensure padding/margins are respected
+          overflow: 'hidden',
+          
         }}
       >
-        {/* Feature cards*/}
+        {/* Feature cards */}
         <Box mb={6}>
           <Typography
             variant="h4"
             component="h2"
             sx={{
               textAlign: 'center',
-              fontSize: '40px',
+              fontSize: { xs: '30px', sm: '35px', md: '40px' }, // Responsive font size
               fontStyle: Theme.typography.h2,
               fontWeight: 700,
               color: Theme.palette.primary.main,
-              letterSpacing: 4
+              letterSpacing: 4,
             }}
           >
             Features
           </Typography>
         </Box>
 
-        {/* cards grid */}
+        {/* Cards grid */}
         <Grid
           container
           spacing={3}
           justifyContent="center"
           alignItems="center"
           sx={{
-            maxWidth: 'md', // Limits the width on larger screens
-            margin: '0 auto',
+            maxWidth: { xs: '100%', md: '80%' }, // Responsive maxWidth for grid
+            margin: '10 auto',
             mb: 6,
           }}
         >
@@ -61,9 +65,8 @@ const FeaturesAI = () => {
               elevation={3}
               sx={{
                 backgroundColor: Theme.palette.primary.beige,
-                p: 4,
+                p: { xs: 2, md: 4 }, // Responsive padding
                 borderRadius: 4,
-                width: 'auto',
                 height: 300,
                 display: 'flex',
                 flexDirection: 'column',
@@ -72,8 +75,8 @@ const FeaturesAI = () => {
                 '&:hover': {
                   transform: 'scale(1.05)',
                 },
-                mx: 'auto', // Center the Paper item
-                mb: 3, // Margin bottom to add spacing
+                mx: 'auto',
+                mb: 3,
               }}
             >
               <Box>
@@ -81,19 +84,19 @@ const FeaturesAI = () => {
                   src="/maintenance.png"
                   width={100}
                   style={{ marginBottom: '0px' }}
-                ></img>
+                  alt="Maintenance"
+                />
               </Box>
               <Typography
                 variant="h5"
                 color="primary.light_purple"
-                sx={{ fontWeight: 600, mb: 2}}
+                sx={{ fontWeight: 600, mb: 2 }}
               >
                 Smart Maintenance Reminders
               </Typography>
 
               <Typography
                 sx={{
-                  
                   color: 'primary.light_purple',
                   fontSize: '16px',
                 }}
@@ -109,9 +112,8 @@ const FeaturesAI = () => {
               elevation={3}
               sx={{
                 backgroundColor: Theme.palette.primary.beige,
-                p: 4,
+                p: { xs: 2, md: 4 },
                 borderRadius: 4,
-                width: 'auto',
                 height: 300,
                 display: 'flex',
                 flexDirection: 'column',
@@ -120,16 +122,12 @@ const FeaturesAI = () => {
                 '&:hover': {
                   transform: 'scale(1.05)',
                 },
-                mx: 'auto', // Center the Paper item
-                mb: 3, // Margin bottom to add spacing
+                mx: 'auto',
+                mb: 3,
               }}
             >
               <Box>
-                <img
-                  src="/ai.png"
-                  width={100}
-                  style={{ marginBottom: '16px' }}
-                ></img>
+                <img src="/ai.png" width={100} style={{ marginBottom: '16px' }} alt="AI" />
               </Box>
               <Typography
                 variant="h5"
@@ -156,9 +154,8 @@ const FeaturesAI = () => {
               elevation={3}
               sx={{
                 backgroundColor: Theme.palette.primary.beige,
-                p: 4,
+                p: { xs: 2, md: 4 },
                 borderRadius: 4,
-                width: 'auto',
                 height: 300,
                 display: 'flex',
                 flexDirection: 'column',
@@ -167,8 +164,8 @@ const FeaturesAI = () => {
                 '&:hover': {
                   transform: 'scale(1.05)',
                 },
-                mx: 'auto', // Center the Paper item
-                mb: 3, // Margin bottom to add spacing
+                mx: 'auto',
+                mb: 3,
               }}
             >
               <Box>
@@ -176,12 +173,13 @@ const FeaturesAI = () => {
                   src="/log.png"
                   width={100}
                   style={{ marginBottom: '16px' }}
-                ></img>
+                  alt="Log"
+                />
               </Box>
               <Typography
                 variant="h5"
                 color="primary.light_purple"
-                sx={{ fontWeight: 600, mb: 2}}
+                sx={{ fontWeight: 600, mb: 2 }}
               >
                 Maintenance Log
               </Typography>
