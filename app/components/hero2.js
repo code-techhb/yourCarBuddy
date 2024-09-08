@@ -10,12 +10,32 @@ import {
 } from "@mui/material";
 import Theme from "./theme";
 import { useRouter } from "next/navigation";
+import { useAuth } from "@clerk/nextjs";
 
 const MiddleHero = () => {
-  const router = useRouter();
   // ---------------------- handle function -----------------
+
+  const { isSignedIn } = useAuth();
+  const router = useRouter();
+
   const RedirectToChatbot = async () => {
-    router.push("/chatbot");
+    if (!isSignedIn) {
+      // Redirect to sign-in page if not signed in
+      router.push("/sign-in");
+    } else {
+      // Redirect to the dashboard if signed in
+      router.push("/chatbot");
+    }
+  };
+
+  const RedirectToDashboard = async () => {
+    if (!isSignedIn) {
+      // Redirect to sign-in page if not signed in
+      router.push("/sign-in");
+    } else {
+      // Redirect to the dashboard if signed in
+      router.push("/dashboard");
+    }
   };
 
   // ---------------------- UI -----------------
@@ -250,7 +270,7 @@ const MiddleHero = () => {
                     color: "black",
                     textTransform: "none",
                   }}
-                  href="/dashboard"
+                  onClick={RedirectToDashboard}
                 >
                   GET REMINDERS
                 </Button>
