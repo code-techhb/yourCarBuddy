@@ -159,6 +159,7 @@ export default function RegisterForm() {
             padding: 4,
             display: "flex",
             flexDirection: "column",
+            width: {xs: '90%', sm: '60%', md: '600', lg: '50%'},
             gap: 3,
             transform: "translate(-50%, -50%)",
           }}
@@ -171,6 +172,7 @@ export default function RegisterForm() {
               fontStyle: "normal",
               fontWeight: 700,
               color: "primary.secondary",
+              fontSize: {xs: '18', sm:'22', md: '30', lg:'40px'},
             }}
           >
             Please enter your car information
