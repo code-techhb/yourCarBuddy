@@ -1,7 +1,7 @@
 "use client";
 
 // --------------------------------- Imports ------------------------------------
-import { useState, useRef , useEffect} from "react";
+import { useState, useRef, useEffect } from "react";
 import {
   Box,
   Typography,
@@ -27,8 +27,8 @@ export default function Home() {
     if (!user) {
       router.push("/sign-in");
     }
-  })
-  
+  });
+
   // --------------------------------- State Management vars -----------------------
   const [messages, setMessages] = useState([
     {
@@ -175,12 +175,14 @@ export default function Home() {
     p: ({ children }) => (
       <Typography
         variant="body1"
-        sx={{ marginBottom: "16px", lineHeight: 1.6, 
+        sx={{
+          marginBottom: "16px",
+          lineHeight: 1.6,
           fontSize: {
-            xs: '0.75rem', // 12px
-            sm: '0.875rem', // 14px
-            md: '1rem', // 16px
-            lg: '1.25rem', // 20px
+            xs: "0.75rem", // 12px
+            sm: "0.875rem", // 14px
+            md: "1rem", // 16px
+            lg: "1.25rem", // 20px
           },
         }}
       >
@@ -213,7 +215,7 @@ export default function Home() {
             border: (theme) => `1px solid ${theme.palette.primary.secondary}`,
             bgcolor: "white", //white
             borderRadius: "12px",
-            height:{xs: '700px', sm: '700px', md: '800px', lg: '800px'},
+            height: { xs: "500px", sm: "700px", md: "800px", lg: "800px" },
           }}
         >
           <Box
@@ -235,7 +237,7 @@ export default function Home() {
           {/* chat window */}
           <Stack
             sx={{
-              height:{xs: '700px', sm: '700px', md: '800px', lg: '750px'},
+              height: { xs: "450px", sm: "700px", md: "800px", lg: "750px" },
               width: "90%",
               borderRadius: "12px",
               borderColor: "black",
@@ -285,19 +287,18 @@ export default function Home() {
                         message.role === "assistant"
                           ? theme.palette.text.light
                           : theme.palette.text.black,
-                          fontSize: {
-                            xs: '0.75rem', // 12px
-                            sm: '0.875rem', // 14px
-                            md: '1rem', // 16px
-                            lg: '1.25rem', // 20px
-                          },
+                      fontSize: {
+                        xs: "0.75rem", // 12px
+                        sm: "0.875rem", // 14px
+                        md: "1rem", // 16px
+                        lg: "1.25rem", // 20px
+                      },
                       borderRadius: "12px",
                       padding: "30px",
                       whiteSpace: "normal",
                       wordBreak: "break-word",
                       overflowWrap: "break-word",
                       maxWidth: "100%",
-                      
                     }}
                   >
                     {message.type === "image" ? (
@@ -353,7 +354,7 @@ export default function Home() {
                 />
               </IconButton>
               <TextField
-                sx={{ width: '80%' }}
+                sx={{ width: "80%" }}
                 variant="standard"
                 multiline
                 fullWidth
@@ -368,7 +369,7 @@ export default function Home() {
                 sx={{
                   borderRadius: "20px",
                   px: "15px",
-                  
+
                   width: "120px",
                   height: "48px",
                   fontFamily: "Montserrat",

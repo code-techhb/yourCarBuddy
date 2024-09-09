@@ -116,8 +116,8 @@ export default function ContactUs() {
               >
                 <Avatar
                   alt="Developer of CardCrafter 1"
-                  src="/H.JPG"
-                  sx={{ width: 100, height: 100, border: "2px solid #1D1632" }}
+                  src="/H.jpg"
+                  sx={{ width: 100, height: 100, border: "2px solid #003632" }}
                 />
                 <Typography
                   mt={1}
@@ -160,8 +160,8 @@ export default function ContactUs() {
               >
                 <Avatar
                   alt="Developer of CardCrafter 2"
-                  src="/g.png"
-                  sx={{ width: 100, height: 100, border: "2px solid #1D1632" }}
+                  src="/G.png"
+                  sx={{ width: 100, height: 100, border: "2px solid #003632" }}
                 />
                 <Typography
                   mt={1}
@@ -205,7 +205,7 @@ export default function ContactUs() {
                 <Avatar
                   alt="Developer of CardCrafter 2"
                   src="/K.jpg"
-                  sx={{ width: 100, height: 100, border: "2px solid #1D1632" }}
+                  sx={{ width: 100, height: 100, border: "2px solid #003632" }}
                 />
                 <Typography
                   mt={1}
