@@ -87,7 +87,7 @@ export default function Dashboard() {
     const timeDifference = nextDate - currentDate;
     // Convert time difference from milliseconds to days
     const daysDifference = Math.floor(timeDifference / (1000 * 60 * 60 * 24));
-    return daysDifference + 1;
+    return daysDifference+1;
   };
 
   // Complete task checker
