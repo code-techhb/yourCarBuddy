@@ -51,16 +51,14 @@ export default function Dashboard() {
   const [checkedItems, setCheckedItems] = useState({}); //added
   const router = useRouter();
 
-
   // ------------------------ Effects-------------------------
   useEffect(() => {
     const fetchCars = async () => {
       if (!isLoaded || !user) {
         console.log("User is not loaded yet.");
         router.push("/sign-in");
-        
       }
-      
+
       try {
         // Assuming you have a collection named 'cars' under 'users' (you may need to change this based on your Firestore structure)
         const userId = user.id;
@@ -89,7 +87,7 @@ export default function Dashboard() {
     const timeDifference = nextDate - currentDate;
     // Convert time difference from milliseconds to days
     const daysDifference = Math.floor(timeDifference / (1000 * 60 * 60 * 24));
-    return daysDifference + 2;
+    return daysDifference + 1;
   };
 
   // Complete task checker
@@ -262,21 +260,21 @@ export default function Dashboard() {
         height="100%"
         sx={{
           background: theme.custom.background,
-          paddingTop: { xs: "60px", sm: "70px" }, 
+          paddingTop: { xs: "60px", sm: "70px" },
           paddingBottom: { xs: "60px", sm: "70px" },
           display: "flex",
           justifyContent: "center",
           alignItems: "center",
           flexDirection: "column",
-          minHeight: '100vh',
-          height: 'auto',
+          minHeight: "100vh",
+          height: "auto",
         }}
       >
         {/* dropdown */}
         <FormControl
           sx={{
             mb: 2,
-            width: {xs: '350px', sm: '700px', md: '800px', lg:'800px'},
+            width: { xs: "350px", sm: "700px", md: "800px", lg: "800px" },
             backgroundColor: "primary.secondary",
             marginTop: 5,
             boxShadow:
@@ -317,7 +315,10 @@ export default function Dashboard() {
         </FormControl>
 
         {/* Maintenance Remainder list  */}
-        <Box mb="40px"  sx={{width: {xs: '350px', sm: '700px', md: '800px', lg:'800px'},}}>
+        <Box
+          mb="40px"
+          sx={{ width: { xs: "350px", sm: "700px", md: "800px", lg: "800px" } }}
+        >
           <Card
             sx={{
               backgroundColor: "primary.white",
@@ -327,17 +328,15 @@ export default function Dashboard() {
               overflow: "auto",
             }}
           >
-            <CardContent >
-              <Box display="flex" alignItems="center" >
+            <CardContent>
+              <Box display="flex" alignItems="center">
                 <BuildIcon></BuildIcon>
                 <Typography variant="h6">Maintenance Reminder List</Typography>
               </Box>
 
               {maintenanceRecords.map((record, index) => (
                 <Box
-                key={
-                  record.id || `${record.carPart}-${record.lastChanged}`
-                }
+                  key={record.id || `${record.carPart}-${record.lastChanged}`}
                   display="flex"
                   justifyContent="space-between"
                   alignItems="center"
@@ -348,9 +347,9 @@ export default function Dashboard() {
                   p="20px"
                 >
                   <Checkbox
-                        sx={{ cursor: "pointer", color: "GREY" }}
-                        onChange={() => handleCheckboxChange(index)}
-                    />
+                    sx={{ cursor: "pointer", color: "GREY" }}
+                    onChange={() => handleCheckboxChange(index)}
+                  />
                   <Box>
                     <Typography variant="h6">{record.carPart}</Typography>
                     <Typography>{record.description}</Typography>
@@ -376,14 +375,17 @@ export default function Dashboard() {
         </Box>
 
         {/* Maintenance log */}
-        <Box  mb="10px" sx={{width: {xs: '350px', sm: '700px', md: '800px', lg:'800px'}}}>
+        <Box
+          mb="10px"
+          sx={{ width: { xs: "350px", sm: "700px", md: "800px", lg: "800px" } }}
+        >
           <Card
             sx={{
               backgroundColor: "primary.white",
               color: "primary.black",
               maxHeight: 350,
               overflow: "auto",
-               marginBottom: 5
+              marginBottom: 5,
             }}
           >
             <CardContent>
@@ -405,7 +407,12 @@ export default function Dashboard() {
                         position: "absolute",
                         top: "50%",
                         left: "50%",
-                        width: {xs:'320px', sm: '550px', md: '600px', lg: '800px'},
+                        width: {
+                          xs: "320px",
+                          sm: "550px",
+                          md: "600px",
+                          lg: "800px",
+                        },
                         padding: 4,
                         display: "flex",
                         flexDirection: "column",
@@ -417,7 +424,12 @@ export default function Dashboard() {
                         variant="h4"
                         sx={{
                           textAlign: "center",
-                          fontSize: {xs: '25px', sm: '30px', md: '35px', lg: "40px"},
+                          fontSize: {
+                            xs: "25px",
+                            sm: "30px",
+                            md: "35px",
+                            lg: "40px",
+                          },
                           fontStyle: "normal",
                           fontWeight: 700,
                           color: "primary.secondary",
@@ -432,7 +444,6 @@ export default function Dashboard() {
                           <Select
                             labelId="car-part-select-label"
                             value={carPart}
-                            
                             variant="standard"
                             onChange={handleCarPartChange}
                           >
@@ -444,11 +455,19 @@ export default function Dashboard() {
                           </Select>
                         </FormControl>
 
-                        <Typography sx={{fontSize: {xs: '18px', sm: '22px', md: '30px', lg: "30px"},}}>
+                        <Typography
+                          sx={{
+                            fontSize: {
+                              xs: "18px",
+                              sm: "22px",
+                              md: "30px",
+                              lg: "30px",
+                            },
+                          }}
+                        >
                           When was the last time you changed it?
                         </Typography>
                         <TextField
-                        
                           variant="standard"
                           type="date"
                           placeholder="when was the last time you changed it?"
@@ -456,11 +475,19 @@ export default function Dashboard() {
                           onChange={handleLastChangedDateChange}
                         />
 
-                        <Typography sx={{fontSize: {xs: '18px', sm: '22px', md: '30px', lg: "30px"},}}>
+                        <Typography
+                          sx={{
+                            fontSize: {
+                              xs: "18px",
+                              sm: "22px",
+                              md: "30px",
+                              lg: "30px",
+                            },
+                          }}
+                        >
                           When is the next time you should change it by?
                         </Typography>
                         <TextField
-                        
                           variant="standard"
                           type="date"
                           value={nextChangeDate}
@@ -523,7 +550,17 @@ export default function Dashboard() {
                   >
                     <CardContent>
                       {maintenanceRecords.length === 0 ? (
-                        <Typography color="red" sx={{fontSize: {xs:'18px', sm:'18px', md: '22px', lg: '30px'}}}>
+                        <Typography
+                          color="red"
+                          sx={{
+                            fontSize: {
+                              xs: "18px",
+                              sm: "18px",
+                              md: "22px",
+                              lg: "30px",
+                            },
+                          }}
+                        >
                           <em>
                             No maintenance records available yet.
                             <br />
@@ -549,7 +586,14 @@ export default function Dashboard() {
                                 marginLeft={2}
                                 variant="subtitle1"
                                 fontWeight="bold"
-                                sx={{fontSize: {xs:'15px', sm:'22px', md: '28', lg: '33'}}}
+                                sx={{
+                                  fontSize: {
+                                    xs: "15px",
+                                    sm: "22px",
+                                    md: "28",
+                                    lg: "33",
+                                  },
+                                }}
                               >
                                 CarPart
                               </Typography>
@@ -559,7 +603,14 @@ export default function Dashboard() {
                                 fontFamily="arial"
                                 variant="subtitle1"
                                 fontWeight="bold"
-                                sx={{fontSize: {xs:'15px', sm:'22px', md: '28', lg: '33'}}}
+                                sx={{
+                                  fontSize: {
+                                    xs: "15px",
+                                    sm: "22px",
+                                    md: "28",
+                                    lg: "33",
+                                  },
+                                }}
                               >
                                 Last Date
                               </Typography>
@@ -569,7 +620,14 @@ export default function Dashboard() {
                                 fontFamily="arial"
                                 variant="subtitle1"
                                 fontWeight="bold"
-                                sx={{fontSize: {xs:'15px', sm:'22px', md: '28', lg: '33'}}}
+                                sx={{
+                                  fontSize: {
+                                    xs: "15px",
+                                    sm: "22px",
+                                    md: "28",
+                                    lg: "33",
+                                  },
+                                }}
                               >
                                 Next Date
                               </Typography>
@@ -588,17 +646,47 @@ export default function Dashboard() {
                                 }}
                               >
                                 <Box sx={{ flex: 2 }}>
-                                  <Typography variant="body1" sx={{fontSize: {xs:'11px', sm:'15px', md: '22px', lg: '22px'}}}>
+                                  <Typography
+                                    variant="body1"
+                                    sx={{
+                                      fontSize: {
+                                        xs: "11px",
+                                        sm: "15px",
+                                        md: "22px",
+                                        lg: "22px",
+                                      },
+                                    }}
+                                  >
                                     {record.carPart}
                                   </Typography>
                                 </Box>
                                 <Box sx={{ flex: 1, textAlign: "left" }}>
-                                  <Typography variant="body1" sx={{fontSize: {xs:'11px', sm:'15px', md: '22px', lg: '22px'}}}>
+                                  <Typography
+                                    variant="body1"
+                                    sx={{
+                                      fontSize: {
+                                        xs: "11px",
+                                        sm: "15px",
+                                        md: "22px",
+                                        lg: "22px",
+                                      },
+                                    }}
+                                  >
                                     {record.lastChanged}
                                   </Typography>
                                 </Box>
                                 <Box sx={{ flex: 1, textAlign: "right" }}>
-                                  <Typography variant="body1" sx={{fontSize: {xs:'11px', sm:'15px', md: '22px', lg: '22px'}}}>
+                                  <Typography
+                                    variant="body1"
+                                    sx={{
+                                      fontSize: {
+                                        xs: "11px",
+                                        sm: "15px",
+                                        md: "22px",
+                                        lg: "22px",
+                                      },
+                                    }}
+                                  >
                                     {record.nextChange}
                                   </Typography>
                                 </Box>
